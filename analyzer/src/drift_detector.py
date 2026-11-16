@@ -31,7 +31,7 @@ class DriftDetector:
         result_file = self.results_dir / f"{config_name}.json"
         if not result_file.exists():
             return {}
-        with open(result_file) as f:
+        with open(result_file, encoding="utf-8") as f:
             results = json.load(f)
         return {r["prompt_id"]: r for r in results}
 
@@ -40,16 +40,38 @@ class DriftDetector:
         baseline = self.load_results(self.baseline_config)
         quantized = self.load_results(quantized_config)
 
+        if not baseline:
+            raise FileNotFoundError(
+                f"Baseline results not found: {self.results_dir / self.baseline_config}.json"
+            )
+
         drifts = []
         for prompt_id, base_result in baseline.items():
             quant_result = quantized.get(prompt_id)
             if not quant_result:
                 continue
 
+            base_output = base_result["output"]
+            quant_output = quant_result["output"]
+
+            if base_output.startswith("ERROR:") or quant_output.startswith("ERROR:"):
+                drifts.append(DriftResult(
+                    prompt_id=prompt_id,
+                    prompt_text=base_result["prompt_text"],
+                    category=base_result["category"],
+                    baseline_output=base_output,
+                    quantized_output=quant_output,
+                    config_name=quantized_config,
+                    drift_type=DriftType.DANGEROUS,
+                    severity=1.0,
+                    explanation="Inference error in one or both configs",
+                ))
+                continue
+
             drift_type, severity, explanation = self.classifier.classify(
                 category=base_result["category"],
-                baseline_output=base_result["output"],
-                quantized_output=quant_result["output"],
+                baseline_output=base_output,
+                quantized_output=quant_output,
                 prompt_text=base_result["prompt_text"],
             )
 
@@ -57,8 +79,8 @@ class DriftDetector:
                 prompt_id=prompt_id,
                 prompt_text=base_result["prompt_text"],
                 category=base_result["category"],
-                baseline_output=base_result["output"],
-                quantized_output=quant_result["output"],
+                baseline_output=base_output,
+                quantized_output=quant_output,
                 config_name=quantized_config,
                 drift_type=drift_type,
                 severity=severity,

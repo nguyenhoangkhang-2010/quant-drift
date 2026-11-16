@@ -17,6 +17,12 @@ class SemanticVerifier:
 
     def similarity(self, text_a: str, text_b: str) -> float:
         """Compute cosine similarity between two texts."""
-        embeddings = self.model.encode([text_a, text_b], normalize_embeddings=True)
+        a = text_a.strip()
+        b = text_b.strip()
+        if not a or not b:
+            return 0.0
+        if a == b:
+            return 1.0
+        embeddings = self.model.encode([a, b], normalize_embeddings=True)
         score = float(np.dot(embeddings[0], embeddings[1]))
         return max(0.0, min(1.0, score))
