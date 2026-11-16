@@ -1,0 +1,67 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install runner dependencies
+        run: |
+          cd runner
+          pip install -r requirements.txt
+          pip install ruff pytest
+
+      - name: Install analyzer dependencies
+        run: |
+          cd analyzer
+          pip install -r requirements.txt
+          pip install ruff pytest
+
+      - name: Lint runner
+        run: ruff check runner/
+
+      - name: Lint analyzer
+        run: ruff check analyzer/
+
+      - name: Generate sample results
+        run: python scripts/generate_sample_results.py
+
+      - name: Test analyzer imports
+        run: python -c "from analyzer.src.classifier import DriftClassifier; print('OK')"
+
+  dashboard:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install dependencies
+        run: |
+          cd dashboard
+          npm install
+
+      - name: Type check
+        run: |
+          cd dashboard
+          npx tsc --noEmit
+
+      - name: Build
+        run: |
+          cd dashboard
+          npm run build

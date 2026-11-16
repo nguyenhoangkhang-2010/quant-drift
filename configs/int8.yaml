@@ -1,0 +1,5 @@
+name: int8
+backend: transformers
+quantization: int8
+dtype: float16
+device: auto

@@ -1,0 +1,5 @@
+name: int4
+backend: transformers
+quantization: int4
+dtype: float16
+device: auto

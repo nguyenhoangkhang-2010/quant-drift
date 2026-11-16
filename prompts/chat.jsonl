@@ -1,0 +1,10 @@
+{"id": "chat_001", "category": "chat", "prompt": "Explain the difference between a stack and a queue in simple terms."}
+{"id": "chat_002", "category": "chat", "prompt": "What are three benefits of regular exercise?"}
+{"id": "chat_003", "category": "chat", "prompt": "Describe how a binary search algorithm works."}
+{"id": "chat_004", "category": "chat", "prompt": "What is the difference between HTTP and HTTPS?"}
+{"id": "chat_005", "category": "chat", "prompt": "Explain what Docker containers are and why they are useful."}
+{"id": "chat_006", "category": "chat", "prompt": "What are the SOLID principles in software engineering?"}
+{"id": "chat_007", "category": "chat", "prompt": "Describe the CAP theorem in distributed systems."}
+{"id": "chat_008", "category": "chat", "prompt": "What is the difference between SQL and NoSQL databases?"}
+{"id": "chat_009", "category": "chat", "prompt": "Explain what an API gateway is and when to use one."}
+{"id": "chat_010", "category": "chat", "prompt": "What is eventual consistency and when is it acceptable?"}

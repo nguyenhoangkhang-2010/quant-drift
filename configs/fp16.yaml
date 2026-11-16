@@ -1,0 +1,5 @@
+name: fp16
+backend: transformers
+quantization: none
+dtype: float16
+device: auto

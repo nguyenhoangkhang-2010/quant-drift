@@ -1,0 +1,10 @@
+{"id": "trans_001", "category": "translation", "prompt": "Translate to French: The weather is beautiful today.", "reference": "Le temps est magnifique aujourd'hui."}
+{"id": "trans_002", "category": "translation", "prompt": "Translate to Spanish: I would like a cup of coffee, please.", "reference": "Me gustaría una taza de café, por favor."}
+{"id": "trans_003", "category": "translation", "prompt": "Translate to German: The book is on the table.", "reference": "Das Buch liegt auf dem Tisch."}
+{"id": "trans_004", "category": "translation", "prompt": "Translate to Japanese: Good morning, how are you?", "reference": "おはようございます、お元気ですか？"}
+{"id": "trans_005", "category": "translation", "prompt": "Translate to Portuguese: Technology is changing the world rapidly.", "reference": "A tecnologia está mudando o mundo rapidamente."}
+{"id": "trans_006", "category": "translation", "prompt": "Translate to Italian: Where is the nearest train station?", "reference": "Dov'è la stazione ferroviaria più vicina?"}
+{"id": "trans_007", "category": "translation", "prompt": "Translate to Korean: Machine learning is a subset of artificial intelligence.", "reference": "머신 러닝은 인공 지능의 하위 분야입니다."}
+{"id": "trans_008", "category": "translation", "prompt": "Translate to Chinese (Simplified): The conference will be held next Monday.", "reference": "会议将于下周一举行。"}
+{"id": "trans_009", "category": "translation", "prompt": "Translate to Russian: Please send me the report by Friday.", "reference": "Пожалуйста, отправьте мне отчет до пятницы."}
+{"id": "trans_010", "category": "translation", "prompt": "Translate to Vietnamese: Data science requires strong mathematical foundations.", "reference": "Khoa học dữ liệu đòi hỏi nền tảng toán học vững chắc."}

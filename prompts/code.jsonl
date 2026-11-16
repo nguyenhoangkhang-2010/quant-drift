@@ -1,0 +1,10 @@
+{"id": "code_001", "category": "code", "prompt": "Write a Python function that returns the nth Fibonacci number.", "test_input": "10", "expected_output": "55"}
+{"id": "code_002", "category": "code", "prompt": "Write a Python function that checks if a string is a palindrome.", "test_input": "\"racecar\"", "expected_output": "True"}
+{"id": "code_003", "category": "code", "prompt": "Write a Python function that returns the factorial of n.", "test_input": "7", "expected_output": "5040"}
+{"id": "code_004", "category": "code", "prompt": "Write a Python function to reverse a linked list. Represent the list as a Python list and reverse it in place.", "test_input": "[1, 2, 3, 4, 5]", "expected_output": "[5, 4, 3, 2, 1]"}
+{"id": "code_005", "category": "code", "prompt": "Write a Python function that finds the two numbers in a list that add up to a target sum.", "test_input": "[2, 7, 11, 15], 9", "expected_output": "[0, 1]"}
+{"id": "code_006", "category": "code", "prompt": "Write a Python function that counts the number of vowels in a string.", "test_input": "\"hello world\"", "expected_output": "3"}
+{"id": "code_007", "category": "code", "prompt": "Write a Python function to find the greatest common divisor of two numbers.", "test_input": "48, 18", "expected_output": "6"}
+{"id": "code_008", "category": "code", "prompt": "Write a Python function that flattens a nested list.", "test_input": "[[1, 2], [3, [4, 5]], 6]", "expected_output": "[1, 2, 3, 4, 5, 6]"}
+{"id": "code_009", "category": "code", "prompt": "Write a Python function that returns True if a number is prime.", "test_input": "17", "expected_output": "True"}
+{"id": "code_010", "category": "code", "prompt": "Write a Python function that sorts a list using bubble sort.", "test_input": "[64, 34, 25, 12, 22, 11, 90]", "expected_output": "[11, 12, 22, 25, 34, 64, 90]"}
