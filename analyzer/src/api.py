@@ -1,9 +1,10 @@
 """FastAPI endpoints for the analyzer."""
 
+import os
 from pathlib import Path
 from dataclasses import asdict
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
 from .drift_detector import DriftDetector
@@ -19,12 +20,28 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-RESULTS_DIR = Path("results")
+RESULTS_DIR = Path(os.environ.get("RESULTS_DIR", "results"))
+
+
+def _serialize_drift(d):
+    data = asdict(d)
+    data["drift_type"] = d.drift_type.value
+    return data
+
+
+def _get_model_dir(model: str) -> Path:
+    model_dir = RESULTS_DIR / model
+    if not model_dir.exists():
+        raise HTTPException(404, f"Model '{model}' not found in results")
+    return model_dir
+
+
+def _non_baseline_configs(model_dir: Path) -> list[str]:
+    return sorted(f.stem for f in model_dir.glob("*.json") if f.stem != "fp16")
 
 
 @app.get("/api/models")
 def list_models():
-    """List available model result directories."""
     if not RESULTS_DIR.exists():
         return {"models": []}
     models = [d.name for d in RESULTS_DIR.iterdir() if d.is_dir()]
@@ -33,18 +50,15 @@ def list_models():
 
 @app.get("/api/models/{model}/configs")
 def list_configs(model: str):
-    """List available configs for a model."""
-    model_dir = RESULTS_DIR / model
-    if not model_dir.exists():
-        return {"configs": []}
+    model_dir = _get_model_dir(model)
     configs = [f.stem for f in model_dir.glob("*.json")]
     return {"configs": sorted(configs)}
 
 
 @app.get("/api/models/{model}/drift/{config}")
 def get_drift(model: str, config: str):
-    """Get drift analysis for a specific config vs baseline."""
-    detector = DriftDetector(RESULTS_DIR / model)
+    model_dir = _get_model_dir(model)
+    detector = DriftDetector(model_dir)
     drifts = detector.detect(config)
 
     return {
@@ -57,20 +71,18 @@ def get_drift(model: str, config: str):
             "benign": sum(1 for d in drifts if d.drift_type == DriftType.BENIGN),
             "dangerous": sum(1 for d in drifts if d.drift_type == DriftType.DANGEROUS),
         },
-        "drifts": [asdict(d) for d in drifts],
+        "drifts": [_serialize_drift(d) for d in drifts],
     }
 
 
 @app.get("/api/models/{model}/heatmap")
 def get_heatmap(model: str):
-    """Get drift heatmap: task × config matrix."""
-    detector = DriftDetector(RESULTS_DIR / model)
-    model_dir = RESULTS_DIR / model
-
-    configs = [f.stem for f in model_dir.glob("*.json") if f.stem != "fp16"]
+    model_dir = _get_model_dir(model)
+    detector = DriftDetector(model_dir)
+    configs = _non_baseline_configs(model_dir)
     heatmap = []
 
-    for config in sorted(configs):
+    for config in configs:
         drifts = detector.detect(config)
         stats = compute_task_stats(drifts)
         for stat in stats:
@@ -87,14 +99,12 @@ def get_heatmap(model: str):
 
 @app.get("/api/models/{model}/recommendations")
 def get_recommendations(model: str):
-    """Get per-task recommendations."""
-    detector = DriftDetector(RESULTS_DIR / model)
-    model_dir = RESULTS_DIR / model
-
-    configs = [f.stem for f in model_dir.glob("*.json") if f.stem != "fp16"]
+    model_dir = _get_model_dir(model)
+    detector = DriftDetector(model_dir)
+    configs = _non_baseline_configs(model_dir)
     all_stats = []
 
-    for config in sorted(configs):
+    for config in configs:
         drifts = detector.detect(config)
         all_stats.extend(compute_task_stats(drifts))
 
@@ -103,9 +113,14 @@ def get_recommendations(model: str):
 
 
 @app.get("/api/models/{model}/examples/{config}")
-def get_examples(model: str, config: str, category: str | None = None, drift_type: str | None = None):
-    """Get specific drift examples, optionally filtered."""
-    detector = DriftDetector(RESULTS_DIR / model)
+def get_examples(
+    model: str,
+    config: str,
+    category: str | None = None,
+    drift_type: str | None = None,
+):
+    model_dir = _get_model_dir(model)
+    detector = DriftDetector(model_dir)
     drifts = detector.detect(config)
 
     if category:
@@ -113,5 +128,5 @@ def get_examples(model: str, config: str, category: str | None = None, drift_typ
     if drift_type:
         drifts = [d for d in drifts if d.drift_type.value == drift_type]
 
-    examples = [asdict(d) for d in drifts[:50]]
+    examples = [_serialize_drift(d) for d in drifts[:50]]
     return {"model": model, "config": config, "examples": examples}
