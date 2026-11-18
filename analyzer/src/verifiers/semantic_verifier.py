@@ -2,18 +2,27 @@
 
 import numpy as np
 
+import threading
+
+_model_cache: dict[str, object] = {}
+_model_lock = threading.Lock()
+
+
+def _get_model(model_name: str):
+    with _model_lock:
+        if model_name not in _model_cache:
+            from sentence_transformers import SentenceTransformer
+            _model_cache[model_name] = SentenceTransformer(model_name)
+        return _model_cache[model_name]
+
 
 class SemanticVerifier:
     def __init__(self, model_name: str = "all-MiniLM-L6-v2"):
-        self._model = None
         self._model_name = model_name
 
     @property
     def model(self):
-        if self._model is None:
-            from sentence_transformers import SentenceTransformer
-            self._model = SentenceTransformer(self._model_name)
-        return self._model
+        return _get_model(self._model_name)
 
     def similarity(self, text_a: str, text_b: str) -> float:
         """Compute cosine similarity between two texts."""

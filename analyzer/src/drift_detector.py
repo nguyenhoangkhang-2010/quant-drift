@@ -1,6 +1,7 @@
 """Compare outputs between baseline and quantized configs."""
 
 import json
+import threading
 from pathlib import Path
 from dataclasses import dataclass
 
@@ -20,11 +21,23 @@ class DriftResult:
     explanation: str
 
 
+_detect_cache: dict[tuple, list] = {}
+_cache_lock = threading.Lock()
+
+
 class DriftDetector:
     def __init__(self, results_dir: Path, baseline_config: str = "fp16"):
         self.results_dir = results_dir
         self.baseline_config = baseline_config
         self.classifier = DriftClassifier()
+
+    def _cache_key(self, quantized_config: str) -> tuple | None:
+        try:
+            base_mtime = (self.results_dir / f"{self.baseline_config}.json").stat().st_mtime_ns
+            quant_mtime = (self.results_dir / f"{quantized_config}.json").stat().st_mtime_ns
+        except OSError:
+            return None
+        return (str(self.results_dir.resolve()), self.baseline_config, quantized_config, base_mtime, quant_mtime)
 
     def load_results(self, config_name: str) -> dict[str, dict]:
         """Load results keyed by prompt_id."""
@@ -36,7 +49,22 @@ class DriftDetector:
         return {r["prompt_id"]: r for r in results}
 
     def detect(self, quantized_config: str) -> list[DriftResult]:
-        """Compare baseline vs quantized outputs for all prompts."""
+        """Compare baseline vs quantized outputs for all prompts (cached by file mtime)."""
+        key = self._cache_key(quantized_config)
+        if key is not None:
+            with _cache_lock:
+                cached = _detect_cache.get(key)
+            if cached is not None:
+                return list(cached)
+
+        drifts = self._detect_uncached(quantized_config)
+
+        if key is not None:
+            with _cache_lock:
+                _detect_cache[key] = drifts
+        return list(drifts)
+
+    def _detect_uncached(self, quantized_config: str) -> list[DriftResult]:
         baseline = self.load_results(self.baseline_config)
         quantized = self.load_results(quantized_config)
 

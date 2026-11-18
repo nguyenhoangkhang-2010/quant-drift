@@ -1,8 +1,26 @@
 """Verify code outputs: syntax check and functional comparison."""
 
 import ast
+import json
 import re
-import threading
+import subprocess
+import sys
+
+_RUNNER = r"""
+import ast, json, sys
+payload = json.load(sys.stdin)
+try:
+    tree = ast.parse(payload["code"])
+    name = next((n.name for n in tree.body if isinstance(n, ast.FunctionDef)), None)
+    if name is None:
+        sys.exit(3)
+    ns = {}
+    exec(compile(tree, "<llm>", "exec"), ns)
+    result = ns[name](*payload["args"])
+    sys.stdout.write("\n" + json.dumps({"result": str(result)}))
+except BaseException:
+    sys.exit(2)
+"""
 
 
 class CodeVerifier:
@@ -29,14 +47,6 @@ class CodeVerifier:
         except SyntaxError:
             return False
 
-    def _find_function(self, namespace: dict) -> str | None:
-        """Find the first user-defined function in namespace."""
-        tree = None
-        for name, obj in namespace.items():
-            if callable(obj) and not name.startswith("_") and name not in dir(__builtins__):
-                return name
-        return None
-
     def compare_outputs(self, baseline_text: str, quantized_text: str) -> bool:
         """Run both code snippets and compare outputs on test inputs."""
         baseline_code = self.extract_code(baseline_text)
@@ -57,26 +67,27 @@ class CodeVerifier:
         return matched > 0
 
     def _safe_execute(self, code: str, args: tuple) -> str | None:
-        """Execute code in a thread with timeout."""
-        result_box: list = []
-        error_box: list = []
+        """Run the first function in `code` with `args` in a child process.
 
-        def run():
-            try:
-                namespace: dict = {"__builtins__": __builtins__}
-                exec(code, namespace)
-                func_name = self._find_function(namespace)
-                if func_name is None:
-                    return
-                r = namespace[func_name](*args)
-                result_box.append(str(r))
-            except Exception as e:
-                error_box.append(e)
-
-        t = threading.Thread(target=run, daemon=True)
-        t.start()
-        t.join(timeout=self.TIMEOUT_SEC)
-
-        if t.is_alive() or error_box or not result_box:
+        A subprocess (unlike a thread) can be killed on timeout, so runaway
+        code from a degraded model cannot keep burning CPU in the API process.
+        """
+        try:
+            proc = subprocess.run(
+                [sys.executable, "-I", "-c", _RUNNER],
+                input=json.dumps({"code": code, "args": list(args)}),
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+                timeout=self.TIMEOUT_SEC,
+            )
+        except subprocess.TimeoutExpired:
             return None
-        return result_box[0]
+
+        if proc.returncode != 0:
+            return None
+        last_line = proc.stdout.rsplit("\n", 1)[-1]
+        try:
+            return json.loads(last_line)["result"]
+        except (ValueError, KeyError):
+            return None

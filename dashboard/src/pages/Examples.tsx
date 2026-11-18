@@ -1,166 +1,148 @@
 import { useEffect, useState } from "react";
-import { fetchModels, fetchConfigs, fetchExamples, DriftExample } from "../api";
+import { fetchConfigs, fetchExamples, DriftExample } from "../api";
+import { useModel } from "../App";
+
+const DRIFT_TYPES = ["all", "no_drift", "benign", "dangerous"] as const;
+
+const DRIFT_STYLE: Record<string, { color: string; bg: string; label: string }> = {
+  no_drift: { color: "var(--safe)", bg: "var(--safe-bg)", label: "NO DRIFT" },
+  benign: { color: "var(--caution)", bg: "var(--caution-bg)", label: "BENIGN" },
+  dangerous: { color: "var(--danger)", bg: "var(--danger-bg)", label: "DANGEROUS" },
+};
 
 export default function Examples() {
-  const [models, setModels] = useState<string[]>([]);
-  const [selectedModel, setSelectedModel] = useState("");
+  const { selected } = useModel();
   const [configs, setConfigs] = useState<string[]>([]);
   const [selectedConfig, setSelectedConfig] = useState("");
   const [examples, setExamples] = useState<DriftExample[]>([]);
+  const [filter, setFilter] = useState<string>("all");
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    fetchModels().then((m) => {
-      setModels(m);
-      if (m.length > 0) setSelectedModel(m[0]);
-    });
-  }, []);
-
-  useEffect(() => {
-    if (selectedModel) {
-      fetchConfigs(selectedModel).then((c) => {
+    if (selected) {
+      fetchConfigs(selected).then((c) => {
         const nonBaseline = c.filter((x) => x !== "fp16");
         setConfigs(nonBaseline);
         if (nonBaseline.length > 0) setSelectedConfig(nonBaseline[0]);
-      });
+      }).catch(() => {});
     }
-  }, [selectedModel]);
+  }, [selected]);
 
   useEffect(() => {
-    if (selectedModel && selectedConfig) {
-      fetchExamples(selectedModel, selectedConfig).then(setExamples);
+    if (selected && selectedConfig) {
+      setLoading(true);
+      fetchExamples(selected, selectedConfig)
+        .then(setExamples)
+        .catch(() => setExamples([]))
+        .finally(() => setLoading(false));
     }
-  }, [selectedModel, selectedConfig]);
+  }, [selected, selectedConfig]);
 
-  const driftColor: Record<string, string> = {
-    NO_DRIFT: "var(--safe)",
-    BENIGN: "var(--caution)",
-    DANGEROUS: "var(--danger)",
+  const filtered = filter === "all"
+    ? examples
+    : examples.filter((e) => e.drift_type === filter);
+
+  const counts = {
+    all: examples.length,
+    no_drift: examples.filter((e) => e.drift_type === "no_drift").length,
+    benign: examples.filter((e) => e.drift_type === "benign").length,
+    dangerous: examples.filter((e) => e.drift_type === "dangerous").length,
   };
 
   return (
     <div>
-      <h2 style={{ marginBottom: "1rem" }}>Drift Examples</h2>
+      <h2 style={{ fontSize: "1.25rem", fontWeight: 700, marginBottom: "0.25rem" }}>
+        Drift Examples
+      </h2>
+      <p style={{ color: "var(--text-muted)", fontSize: "0.875rem", marginBottom: "1.5rem" }}>
+        Side-by-side comparison of baseline vs quantized outputs
+      </p>
 
-      <div style={{ display: "flex", gap: "1rem", marginBottom: "1.5rem" }}>
-        <select
-          value={selectedModel}
-          onChange={(e) => setSelectedModel(e.target.value)}
-          style={{
-            padding: "0.5rem",
-            background: "var(--bg-secondary)",
-            color: "var(--text-primary)",
-            border: "1px solid var(--text-secondary)",
-            borderRadius: 4,
-          }}
-        >
-          {models.map((m) => (
-            <option key={m} value={m}>
-              {m}
-            </option>
-          ))}
-        </select>
-
-        <select
-          value={selectedConfig}
-          onChange={(e) => setSelectedConfig(e.target.value)}
-          style={{
-            padding: "0.5rem",
-            background: "var(--bg-secondary)",
-            color: "var(--text-primary)",
-            border: "1px solid var(--text-secondary)",
-            borderRadius: 4,
-          }}
-        >
+      <div style={{ display: "flex", gap: "0.75rem", marginBottom: "1rem", flexWrap: "wrap", alignItems: "center" }}>
+        <select value={selectedConfig} onChange={(e) => setSelectedConfig(e.target.value)}>
           {configs.map((c) => (
-            <option key={c} value={c}>
-              {c}
-            </option>
+            <option key={c} value={c}>{c}</option>
           ))}
         </select>
-      </div>
 
-      {examples.length === 0 ? (
-        <p style={{ color: "var(--text-secondary)" }}>No examples found.</p>
-      ) : (
-        <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-          {examples.map((ex) => (
-            <div
-              key={ex.prompt_id}
+        <div style={{ display: "flex", gap: "0.25rem" }}>
+          {DRIFT_TYPES.map((dt) => (
+            <button
+              key={dt}
+              onClick={() => setFilter(dt)}
               style={{
-                padding: "1rem",
-                background: "var(--bg-secondary)",
-                borderRadius: 8,
-                borderLeft: `4px solid ${driftColor[ex.drift_type] ?? "var(--text-secondary)"}`,
+                padding: "0.375rem 0.75rem",
+                borderRadius: "var(--radius)",
+                border: "1px solid var(--border)",
+                background: filter === dt ? "var(--bg-tertiary)" : "transparent",
+                color: dt === "all" ? "var(--text-primary)" : DRIFT_STYLE[dt]?.color ?? "var(--text-primary)",
+                cursor: "pointer",
+                fontSize: "0.8rem",
+                fontWeight: filter === dt ? 600 : 400,
               }}
             >
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  marginBottom: "0.5rem",
-                }}
-              >
-                <span style={{ fontWeight: 600 }}>
-                  [{ex.category}] {ex.prompt_id}
-                </span>
-                <span
-                  style={{
-                    color: driftColor[ex.drift_type],
-                    fontWeight: 600,
-                  }}
-                >
-                  {ex.drift_type} ({(ex.severity * 100).toFixed(0)}%)
-                </span>
-              </div>
-              <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem" }}>
-                {ex.prompt_text}
-              </p>
-              <div
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "1fr 1fr",
-                  gap: "1rem",
-                  marginTop: "0.75rem",
-                }}
-              >
-                <div>
-                  <strong>Baseline (FP16)</strong>
-                  <pre
-                    style={{
-                      marginTop: "0.25rem",
-                      whiteSpace: "pre-wrap",
-                      fontSize: "0.85rem",
-                      color: "var(--text-secondary)",
-                    }}
-                  >
-                    {ex.baseline_output}
-                  </pre>
-                </div>
-                <div>
-                  <strong>Quantized</strong>
-                  <pre
-                    style={{
-                      marginTop: "0.25rem",
-                      whiteSpace: "pre-wrap",
-                      fontSize: "0.85rem",
-                      color: "var(--text-secondary)",
-                    }}
-                  >
-                    {ex.quantized_output}
-                  </pre>
-                </div>
-              </div>
-              <p
-                style={{
-                  marginTop: "0.5rem",
-                  fontStyle: "italic",
-                  fontSize: "0.85rem",
-                }}
-              >
-                {ex.explanation}
-              </p>
-            </div>
+              {dt === "all" ? "All" : dt.replace("_", " ")} ({counts[dt]})
+            </button>
           ))}
+        </div>
+      </div>
+
+      {loading ? (
+        <p style={{ color: "var(--text-secondary)" }}>Analyzing drift patterns...</p>
+      ) : filtered.length === 0 ? (
+        <p style={{ color: "var(--text-secondary)" }}>No examples found.</p>
+      ) : (
+        <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+          {filtered.map((ex) => {
+            const style = DRIFT_STYLE[ex.drift_type] ?? DRIFT_STYLE.benign;
+            return (
+              <div
+                key={ex.prompt_id}
+                className="card"
+                style={{ borderLeft: `3px solid ${style.color}` }}
+              >
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.5rem" }}>
+                  <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
+                    <span style={{ fontWeight: 600, fontSize: "0.875rem" }}>{ex.prompt_id}</span>
+                    <span className={`badge badge-${ex.drift_type === "no_drift" ? "safe" : ex.drift_type === "benign" ? "caution" : "danger"}`}>
+                      {style.label}
+                    </span>
+                    <span style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>{ex.category}</span>
+                  </div>
+                  <span style={{ fontSize: "0.8rem", color: "var(--text-muted)" }}>
+                    severity: {(ex.severity * 100).toFixed(0)}%
+                  </span>
+                </div>
+
+                <p style={{ color: "var(--text-secondary)", fontSize: "0.85rem", marginBottom: "0.75rem" }}>
+                  {ex.prompt_text}
+                </p>
+
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem" }}>
+                  <div style={{ background: "var(--bg-primary)", borderRadius: 6, padding: "0.75rem" }}>
+                    <span style={{ fontSize: "0.7rem", color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                      Baseline (FP16)
+                    </span>
+                    <pre style={{ marginTop: "0.375rem", whiteSpace: "pre-wrap", fontSize: "0.8rem", color: "var(--text-secondary)", lineHeight: 1.5 }}>
+                      {ex.baseline_output}
+                    </pre>
+                  </div>
+                  <div style={{ background: "var(--bg-primary)", borderRadius: 6, padding: "0.75rem" }}>
+                    <span style={{ fontSize: "0.7rem", color: style.color, textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                      Quantized ({selectedConfig})
+                    </span>
+                    <pre style={{ marginTop: "0.375rem", whiteSpace: "pre-wrap", fontSize: "0.8rem", color: "var(--text-secondary)", lineHeight: 1.5 }}>
+                      {ex.quantized_output}
+                    </pre>
+                  </div>
+                </div>
+
+                <p style={{ marginTop: "0.5rem", fontSize: "0.8rem", fontStyle: "italic", color: "var(--text-muted)" }}>
+                  {ex.explanation}
+                </p>
+              </div>
+            );
+          })}
         </div>
       )}
     </div>
