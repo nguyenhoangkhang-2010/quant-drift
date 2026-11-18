@@ -81,6 +81,23 @@ export function useThemeState(): [Theme, () => void] {
     document.documentElement.setAttribute("data-theme", theme);
   }, [theme]);
 
+  // Until the viewer picks a theme by hand, follow the operating system.
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-color-scheme: dark)");
+    const onChange = (e: MediaQueryListEvent) => {
+      let stored: string | null = null;
+      try {
+        stored = localStorage.getItem("qd-theme");
+      } catch {
+        /* storage unavailable */
+      }
+      if (stored === "light" || stored === "dark") return;
+      setTheme(e.matches ? "dark" : "light");
+    };
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
+
   const toggle = useCallback(() => {
     setTheme((t) => {
       const next: Theme = t === "dark" ? "light" : "dark";

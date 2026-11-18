@@ -16,27 +16,34 @@ import {
 } from "./components";
 import { ModelContext, ThemeContext, useModel, useTheme } from "./context";
 import { useThemeState } from "./hooks";
+import { I18nProvider, type Lang, useI18n } from "./i18n";
 import Examples from "./pages/Examples";
 import Heatmap from "./pages/Heatmap";
 import Report from "./pages/Report";
 
 const NAV = [
-  { to: "/", label: "Heatmap", Icon: IconGrid, end: true },
-  { to: "/examples", label: "Examples", Icon: IconSplit, end: false },
-  { to: "/report", label: "Report", Icon: IconDoc, end: false },
-];
+  { to: "/", key: "nav.heatmap", Icon: IconGrid, end: true },
+  { to: "/examples", key: "nav.examples", Icon: IconSplit, end: false },
+  { to: "/report", key: "nav.report", Icon: IconDoc, end: false },
+] as const;
 
 const READING_GUIDE = [
-  { key: "no_drift", text: "Identical to the FP16 baseline." },
-  { key: "benign", text: "Reworded, but meaning and answer are intact." },
-  { key: "dangerous", text: "Wrong answer, broken code or lost meaning." },
-];
+  { drift: "no_drift", key: "guide.no_drift" },
+  { drift: "benign", key: "guide.benign" },
+  { drift: "dangerous", key: "guide.dangerous" },
+] as const;
+
+const LANGS = [
+  { value: "en", label: "EN" },
+  { value: "vi", label: "VI" },
+] as const;
 
 function Shell() {
   const { models, selected, setSelected, status, error, reload } = useModel();
   const { theme, toggle } = useTheme();
+  const { t, lang, setLang } = useI18n();
   const { pathname } = useLocation();
-  const next = theme === "dark" ? "light" : "dark";
+  const toggleLabel = t(theme === "dark" ? "theme.toLight" : "theme.toDark");
 
   return (
     <div className="shell">
@@ -50,62 +57,61 @@ function Shell() {
         </div>
 
         <nav className="nav" aria-label="Primary">
-          {NAV.map(({ to, label, Icon, end }) => (
+          {NAV.map(({ to, key, Icon, end }) => (
             <NavLink key={to} to={to} end={end} className={({ isActive }) => (isActive ? "active" : undefined)}>
               <Icon size={17} />
-              {label}
+              {t(key)}
             </NavLink>
           ))}
         </nav>
 
         <div className="side-foot">
           <div className="legend-card">
-            <h2>How to read</h2>
+            <h2>{t("guide.title")}</h2>
             <ul>
               {READING_GUIDE.map((g) => (
-                <li key={g.key}>
-                  <Chip meta={DRIFTS[g.key]} />
-                  <p>{g.text}</p>
+                <li key={g.drift}>
+                  <Chip meta={DRIFTS[g.drift]} />
+                  <p>{t(g.key)}</p>
                 </li>
               ))}
             </ul>
           </div>
-          <button
-            type="button"
-            className="icon-btn"
-            onClick={toggle}
-            aria-label={`Switch to ${next} theme`}
-            title={`Switch to ${next} theme`}
-          >
-            {theme === "dark" ? <IconSun /> : <IconMoon />}
-          </button>
         </div>
       </aside>
 
       <div className="main">
         <header className="topbar">
           <div className="topbar-model">
-            <span className="eyebrow">Model</span>
+            <span className="eyebrow">{t("top.model")}</span>
             {models.length > 0 && (
               <Segmented
-                label="Model"
+                label={t("top.model")}
                 value={selected}
                 options={models.map((m) => ({ value: m, label: m }))}
                 onChange={setSelected}
               />
             )}
           </div>
-          <span className="baseline">baseline · fp16</span>
+          <div className="topbar-tools">
+            <span className="baseline">baseline · fp16</span>
+            <Segmented<Lang>
+              label={t("lang.label")}
+              value={lang}
+              options={LANGS.map((l) => ({ value: l.value, label: l.label }))}
+              onChange={setLang}
+            />
+            <button type="button" className="icon-btn" onClick={toggle} aria-label={toggleLabel} title={toggleLabel}>
+              {theme === "dark" ? <IconSun /> : <IconMoon />}
+            </button>
+          </div>
         </header>
 
         <div className="content" key={pathname}>
           {status === "error" ? (
             <ErrorState message={error ?? "Request failed"} onRetry={reload} />
           ) : status === "ready" && models.length === 0 ? (
-            <EmptyState
-              title="No results yet"
-              hint="Run the benchmark, or generate the demo data with scripts/generate_sample_results.py."
-            />
+            <EmptyState title={t("app.emptyTitle")} hint={t("app.emptyHint")} />
           ) : (
             <Routes>
               <Route path="/" element={<Heatmap />} />
@@ -151,13 +157,15 @@ function App() {
   }, [tick]);
 
   return (
-    <ThemeContext.Provider value={{ theme, toggle }}>
-      <ModelContext.Provider value={{ models, selected, setSelected, status, error, reload }}>
-        <BrowserRouter>
-          <Shell />
-        </BrowserRouter>
-      </ModelContext.Provider>
-    </ThemeContext.Provider>
+    <I18nProvider>
+      <ThemeContext.Provider value={{ theme, toggle }}>
+        <ModelContext.Provider value={{ models, selected, setSelected, status, error, reload }}>
+          <BrowserRouter>
+            <Shell />
+          </BrowserRouter>
+        </ModelContext.Provider>
+      </ThemeContext.Provider>
+    </I18nProvider>
   );
 }
 

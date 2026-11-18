@@ -15,13 +15,18 @@ import {
 } from "../components";
 import { useModel, useTheme } from "../context";
 import { useAsync } from "../hooks";
-import { cap, cssVars, HEAT_MAX, heatBg, heatIsHigh, seriesColor, sortConfigs } from "../lib";
+import { type Key, useI18n } from "../i18n";
+import { cssVars, HEAT_MAX, heatBg, heatIsHigh, seriesColor, sortConfigs } from "../lib";
 
-const VERDICT_RULES = { safe: "0% dangerous", caution: "under 5%", unsafe: "5% or more" } as const;
+const VERDICT_RULES = { safe: "heat.ruleSafe", caution: "heat.ruleCaution", unsafe: "heat.ruleUnsafe" } as const satisfies Record<
+  string,
+  Key
+>;
 
 export default function Heatmap() {
   const { selected } = useModel();
   const { theme } = useTheme();
+  const { t, cat, fmt } = useI18n();
   const navigate = useNavigate();
   const { data, loading, error, reload } = useAsync(() => fetchHeatmap(selected), [selected], selected !== "");
 
@@ -30,15 +35,16 @@ export default function Heatmap() {
     const configs = sortConfigs([...new Set(cells.map((c) => c.config))]);
     const categories = [...new Set(cells.map((c) => c.category))].sort();
     const at = new Map(cells.map((c) => [`${c.category}|${c.config}`, c] as const));
-    const chart = categories.map((cat) => {
-      const row: Record<string, string | number> = { category: cap(cat) };
-      configs.forEach((cfg) => {
-        row[cfg] = at.get(`${cat}|${cfg}`)?.dangerous_rate ?? 0;
-      });
-      return row;
-    });
-    return { configs, categories, at, chart };
+    return { configs, categories, at };
   }, [data]);
+
+  const chart = view.categories.map((c) => {
+    const row: Record<string, string | number> = { category: cat(c) };
+    view.configs.forEach((cfg) => {
+      row[cfg] = view.at.get(`${c}|${cfg}`)?.dangerous_rate ?? 0;
+    });
+    return row;
+  });
 
   const open = (config: string, category: string, rate: number) => {
     const q = new URLSearchParams({ config, category });
@@ -49,30 +55,23 @@ export default function Heatmap() {
   return (
     <>
       <ProgressBar active={loading} />
-      <PageHeader
-        eyebrow="01 · Overview"
-        title="Where quantization breaks"
-        lede="Share of prompts whose output turned dangerous after quantization, per task type, measured against the FP16 baseline."
-      />
+      <PageHeader eyebrow={t("heat.eyebrow")} title={t("heat.title")} lede={t("heat.lede")} />
 
       {error ? (
         <ErrorState message={error} onRetry={reload} />
       ) : !data ? (
-        <Loading label="Analyzing drift" />
+        <Loading label={t("heat.loading")} />
       ) : data.length === 0 ? (
-        <EmptyState title="No results for this model" hint="Run the benchmark first, then reload." />
+        <EmptyState title={t("heat.emptyTitle")} hint={t("heat.emptyHint")} />
       ) : (
         <div className={`stack${loading ? " is-refetching" : ""}`}>
           <section className="card reveal">
-            <SectionHead
-              title="Dangerous drift by task and config"
-              sub="Select a cell to read the examples behind it."
-            />
+            <SectionHead title={t("heat.secTitle")} sub={t("heat.secSub")} />
             <div className="scroll-x">
               <table className="heat">
                 <thead>
                   <tr>
-                    <th scope="col">Task</th>
+                    <th scope="col">{t("common.task")}</th>
                     {view.configs.map((cfg) => (
                       <th key={cfg} scope="col">
                         {cfg}
@@ -81,35 +80,41 @@ export default function Heatmap() {
                   </tr>
                 </thead>
                 <tbody>
-                  {view.categories.map((cat, r) => (
-                    <tr key={cat}>
+                  {view.categories.map((c, r) => (
+                    <tr key={c}>
                       <th scope="row">
-                        {cap(cat)}
-                        <span className="row-n">n={view.at.get(`${cat}|${view.configs[0]}`)?.total ?? 0}</span>
+                        {cat(c)}
+                        <span className="row-n">n={view.at.get(`${c}|${view.configs[0]}`)?.total ?? 0}</span>
                       </th>
-                      {view.configs.map((cfg, c) => {
-                        const cell = view.at.get(`${cat}|${cfg}`);
+                      {view.configs.map((cfg, col) => {
+                        const cell = view.at.get(`${c}|${cfg}`);
                         if (!cell) return <td key={cfg} />;
                         const rate = cell.dangerous_rate;
-                        const { Icon, label } = VERDICTS[cell.verdict];
+                        const { Icon, labelKey } = VERDICTS[cell.verdict];
                         return (
                           <td key={cfg}>
                             <button
                               type="button"
                               className="cell"
                               data-hi={heatIsHigh(rate, theme)}
-                              style={{ ...cssVars({ "--i": r + c }), background: heatBg(rate) }}
-                              onClick={() => open(cfg, cat, rate)}
-                              aria-label={`${cap(cat)} at ${cfg.toUpperCase()}: ${rate}% dangerous, ${cell.drift_rate}% any drift, verdict ${label}. Open examples.`}
+                              style={{ ...cssVars({ "--i": r + col }), background: heatBg(rate) }}
+                              onClick={() => open(cfg, c, rate)}
+                              aria-label={t("heat.cellAria", {
+                                task: cat(c),
+                                cfg: cfg.toUpperCase(),
+                                rate: fmt(rate),
+                                drift: fmt(cell.drift_rate),
+                                verdict: t(labelKey),
+                              })}
                             >
                               <span className="cell-icon">
                                 <Icon size={15} />
                               </span>
                               <span className="cell-val">
-                                {rate}
+                                {fmt(rate)}
                                 <small>%</small>
                               </span>
-                              <span className="cell-sub">{cell.drift_rate}% any drift</span>
+                              <span className="cell-sub">{t("heat.anyDrift", { n: fmt(cell.drift_rate) })}</span>
                               <span className="cell-go">
                                 <IconArrow size={15} />
                               </span>
@@ -131,11 +136,11 @@ export default function Heatmap() {
               </div>
               <div className="scale-key">
                 {(["safe", "caution", "unsafe"] as const).map((v) => {
-                  const { Icon, label } = VERDICTS[v];
+                  const { Icon, labelKey } = VERDICTS[v];
                   return (
                     <span key={v}>
                       <Icon size={13} />
-                      {label}, {VERDICT_RULES[v]}
+                      {t(labelKey)}, {t(VERDICT_RULES[v])}
                     </span>
                   );
                 })}
@@ -144,7 +149,7 @@ export default function Heatmap() {
           </section>
 
           <section className="card reveal" style={cssVars({ "--i": 1 })}>
-            <SectionHead title="Compression level, side by side" sub="Dangerous drift rate per task type.">
+            <SectionHead title={t("heat.chartTitle")} sub={t("heat.chartSub")}>
               <div className="key">
                 {view.configs.map((cfg) => (
                   <span key={cfg}>
@@ -155,12 +160,7 @@ export default function Heatmap() {
               </div>
             </SectionHead>
             <ResponsiveContainer width="100%" height={290}>
-              <BarChart
-                data={view.chart}
-                barGap={3}
-                barCategoryGap="30%"
-                margin={{ top: 8, right: 4, bottom: 0, left: -6 }}
-              >
+              <BarChart data={chart} barGap={3} barCategoryGap="30%" margin={{ top: 8, right: 4, bottom: 0, left: -6 }}>
                 <CartesianGrid stroke="var(--grid)" vertical={false} />
                 <XAxis
                   dataKey="category"
@@ -184,7 +184,7 @@ export default function Heatmap() {
                     dataKey={cfg}
                     name={cfg.toUpperCase()}
                     fill={seriesColor(cfg, view.configs)}
-                    radius={[4, 4, 0, 0]}
+                    radius={[2, 2, 0, 0]}
                     maxBarSize={24}
                     animationDuration={800}
                   />

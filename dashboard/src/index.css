@@ -46,8 +46,9 @@
   --on-heat-hi: #ffffff;
 
   --shadow: 0 1px 2px rgba(11, 11, 11, 0.04), 0 10px 30px -16px rgba(11, 11, 11, 0.18);
-  --radius: 14px;
-  --radius-sm: 10px;
+  --radius: 6px;
+  --radius-sm: 4px;
+  --radius-xs: 2px;
   --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 
@@ -124,7 +125,7 @@ ol {
 :focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
-  border-radius: 6px;
+  border-radius: var(--radius-xs);
 }
 
 ::selection {
@@ -189,7 +190,7 @@ h2 {
   align-items: center;
   gap: 11px;
   padding: 9px 12px;
-  border-radius: 9px;
+  border-radius: var(--radius-sm);
   font-size: 14px;
   font-weight: 500;
   color: var(--ink-2);
@@ -263,7 +264,7 @@ h2 {
   width: 34px;
   height: 34px;
   border: 1px solid var(--border);
-  border-radius: 9px;
+  border-radius: var(--radius-sm);
   background: var(--surface);
   color: var(--ink-2);
   cursor: pointer;
@@ -302,6 +303,12 @@ h2 {
   align-items: center;
   gap: 12px;
   min-width: 0;
+}
+
+.topbar-tools {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
 .baseline {
@@ -393,7 +400,7 @@ h2 {
 .key i {
   width: 10px;
   height: 10px;
-  border-radius: 3px;
+  border-radius: var(--radius-xs);
 }
 
 .reveal {
@@ -419,7 +426,7 @@ h2 {
   gap: 6px;
   height: 24px;
   padding: 0 10px 0 8px;
-  border-radius: 999px;
+  border-radius: var(--radius-sm);
   background: var(--w);
   font-size: 12px;
   font-weight: 500;
@@ -436,7 +443,7 @@ h2 {
   align-items: center;
   height: 24px;
   padding: 0 9px;
-  border-radius: 7px;
+  border-radius: var(--radius-sm);
   background: var(--wash);
   font-size: 12.5px;
   color: var(--ink);
@@ -447,7 +454,7 @@ h2 {
   height: 34px;
   padding: 0 16px;
   border: 1px solid var(--border-strong);
-  border-radius: 9px;
+  border-radius: var(--radius-sm);
   background: var(--surface);
   font-weight: 500;
   cursor: pointer;
@@ -478,7 +485,7 @@ h2 {
   padding: 3px;
   background: var(--surface-2);
   border: 1px solid var(--border);
-  border-radius: 11px;
+  border-radius: var(--radius);
 }
 
 .seg button {
@@ -488,7 +495,7 @@ h2 {
   height: 30px;
   padding: 0 12px;
   border: 0;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   background: transparent;
   font-size: 13px;
   font-weight: 500;
@@ -510,7 +517,7 @@ h2 {
 .seg-dot {
   width: 8px;
   height: 8px;
-  border-radius: 50%;
+  border-radius: var(--radius-xs);
 }
 
 .seg-count {
@@ -577,7 +584,7 @@ h2 {
   height: 94px;
   padding: 12px 14px;
   border: 1px solid rgba(127, 127, 127, 0.18);
-  border-radius: 12px;
+  border-radius: var(--radius-sm);
   text-align: left;
   color: var(--on-heat-lo);
   cursor: pointer;
@@ -655,7 +662,7 @@ h2 {
   width: 180px;
   height: 10px;
   border: 1px solid var(--border);
-  border-radius: 6px;
+  border-radius: var(--radius-xs);
   background: linear-gradient(in oklab to right, var(--heat-lo), var(--heat-hi));
 }
 
@@ -678,7 +685,7 @@ h2 {
   padding: 10px 12px;
   background: var(--surface);
   border: 1px solid var(--border-strong);
-  border-radius: 10px;
+  border-radius: var(--radius-sm);
   box-shadow: var(--shadow);
   font-size: 12.5px;
 }
@@ -698,7 +705,7 @@ h2 {
 .tip-row i {
   width: 10px;
   height: 10px;
-  border-radius: 3px;
+  border-radius: var(--radius-xs);
 }
 
 .tip-row strong {
@@ -715,14 +722,14 @@ h2 {
 .meter {
   height: 8px;
   overflow: hidden;
-  border-radius: 999px;
+  border-radius: var(--radius-xs);
   background: var(--surface-2);
 }
 
 .meter i {
   display: block;
   height: 100%;
-  border-radius: 999px;
+  border-radius: var(--radius-xs);
   transform-origin: left;
   animation: grow 0.9s var(--ease) backwards;
 }
@@ -737,7 +744,7 @@ h2 {
   display: block;
   height: 100%;
   min-width: 6px;
-  border-radius: 999px;
+  border-radius: var(--radius-xs);
   transform-origin: left;
   animation: grow 0.9s var(--ease) backwards;
 }
@@ -760,7 +767,7 @@ h2 {
 .legend li i {
   width: 10px;
   height: 10px;
-  border-radius: 3px;
+  border-radius: var(--radius-xs);
 }
 
 .legend li b {
@@ -910,7 +917,7 @@ h2 {
 
 .panel mark {
   padding: 1px 2px;
-  border-radius: 3px;
+  border-radius: var(--radius-xs);
   background: var(--mark, var(--crit-wash));
   color: inherit;
   box-decoration-break: clone;
@@ -1034,7 +1041,7 @@ h2 {
 .guide-h h3 i {
   width: 10px;
   height: 10px;
-  border-radius: 3px;
+  border-radius: var(--radius-xs);
 }
 
 .guide-rate {
@@ -1049,7 +1056,7 @@ h2 {
 
 .guide-sets {
   display: grid;
-  grid-template-columns: 78px minmax(0, 1fr);
+  grid-template-columns: 104px minmax(0, 1fr);
   gap: 10px 12px;
   align-items: start;
 }
@@ -1273,28 +1280,32 @@ h2 {
     position: static;
     height: auto;
     display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    align-items: center;
-    gap: 10px 16px;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 10px;
     padding: 12px 16px;
     border-right: 0;
     border-bottom: 1px solid var(--border);
   }
 
   .brand {
-    grid-area: 1 / 1;
     padding: 0;
   }
 
   .side-foot {
-    grid-area: 1 / 2;
-    margin: 0;
+    display: none;
   }
 
   .nav {
-    grid-area: 2 / 1 / 3 / 3;
     flex-direction: row;
     overflow-x: auto;
+  }
+
+  .baseline {
+    display: none;
+  }
+
+  .topbar-tools {
+    margin-left: auto;
   }
 
   .nav a.active::before {

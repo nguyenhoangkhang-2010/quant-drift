@@ -1,6 +1,7 @@
 import type { ReactElement, ReactNode } from "react";
 import type { Verdict } from "./api";
 import { useCountUp, useElapsed } from "./hooks";
+import { type Key, useI18n } from "./i18n";
 import { cssVars } from "./lib";
 
 /* ---------- icons ---------- */
@@ -98,7 +99,7 @@ export const IconInfo = ({ size }: IconProps) => (
 export function BrandMark({ size = 30 }: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 32 32" aria-hidden="true">
-      <rect width="32" height="32" rx="9" fill="var(--ink)" />
+      <rect width="32" height="32" rx="5" fill="var(--ink)" />
       <path d="M6 11h20" stroke="var(--surface)" strokeOpacity=".55" strokeWidth="2.4" strokeLinecap="round" />
       <path d="M6 11c8 0 10 10 20 10" stroke="var(--series-2)" strokeWidth="2.6" strokeLinecap="round" fill="none" />
     </svg>
@@ -108,33 +109,34 @@ export function BrandMark({ size = 30 }: IconProps) {
 /* ---------- verdicts and drift types ---------- */
 
 export interface Meta {
-  label: string;
+  labelKey: Key;
   color: string;
   wash: string;
   Icon: (p: IconProps) => ReactElement;
 }
 
 export const VERDICTS: Record<Verdict, Meta> = {
-  safe: { label: "Safe", color: "var(--good)", wash: "var(--good-wash)", Icon: IconCheck },
-  caution: { label: "Caution", color: "var(--warn)", wash: "var(--warn-wash)", Icon: IconAlert },
-  unsafe: { label: "Unsafe", color: "var(--crit)", wash: "var(--crit-wash)", Icon: IconX },
+  safe: { labelKey: "verdict.safe", color: "var(--good)", wash: "var(--good-wash)", Icon: IconCheck },
+  caution: { labelKey: "verdict.caution", color: "var(--warn)", wash: "var(--warn-wash)", Icon: IconAlert },
+  unsafe: { labelKey: "verdict.unsafe", color: "var(--crit)", wash: "var(--crit-wash)", Icon: IconX },
 };
 
 export const DRIFTS: Record<string, Meta> = {
-  no_drift: { label: "No drift", color: "var(--good)", wash: "var(--good-wash)", Icon: IconCheck },
-  benign: { label: "Benign", color: "var(--warn)", wash: "var(--warn-wash)", Icon: IconAlert },
-  dangerous: { label: "Dangerous", color: "var(--crit)", wash: "var(--crit-wash)", Icon: IconX },
+  no_drift: { labelKey: "drift.no_drift", color: "var(--good)", wash: "var(--good-wash)", Icon: IconCheck },
+  benign: { labelKey: "drift.benign", color: "var(--warn)", wash: "var(--warn-wash)", Icon: IconAlert },
+  dangerous: { labelKey: "drift.dangerous", color: "var(--crit)", wash: "var(--crit-wash)", Icon: IconX },
 };
 
 export const driftMeta = (type: string): Meta => DRIFTS[type] ?? DRIFTS.benign;
 
 // A status colour never carries meaning alone: every chip pairs it with an icon and a label.
 export function Chip({ meta }: { meta: Meta }) {
+  const { t } = useI18n();
   const { Icon } = meta;
   return (
     <span className="chip" style={cssVars({ "--c": meta.color, "--w": meta.wash })}>
       <Icon size={13} />
-      {meta.label}
+      {t(meta.labelKey)}
     </span>
   );
 }
@@ -269,8 +271,9 @@ export function SplitBar({ parts }: { parts: SplitPart[] }) {
 }
 
 export function CountUp({ value, decimals = 0 }: { value: number; decimals?: number }) {
+  const { fmt } = useI18n();
   const v = useCountUp(value);
-  return <>{v.toFixed(decimals)}</>;
+  return <>{fmt(v, decimals, decimals)}</>;
 }
 
 /* ---------- states ---------- */
@@ -283,6 +286,7 @@ export const ProgressBar = ({ active }: { active: boolean }) => (
 
 export function Loading({ label }: { label: string }) {
   const seconds = useElapsed(true);
+  const { t } = useI18n();
   return (
     <div className="card loading" role="status" aria-live="polite">
       <svg viewBox="0 0 140 44" aria-hidden="true">
@@ -295,22 +299,21 @@ export function Loading({ label }: { label: string }) {
         <span className="loading-s">{seconds}s</span>
       </div>
       <p className="loading-p">
-        {seconds >= 6
-          ? "The first request warms up the embedding model and can take up to a minute. After that it is instant."
-          : "Comparing every quantized output against the FP16 baseline."}
+        {seconds >= 6 ? t("load.warm") : t("load.compare")}
       </p>
     </div>
   );
 }
 
 export function ErrorState({ message, onRetry }: { message: string; onRetry: () => void }) {
+  const { t } = useI18n();
   return (
     <div className="card empty" role="alert">
       <IconAlert size={22} />
-      <h2>Could not reach the analyzer</h2>
+      <h2>{t("err.title")}</h2>
       <p>{message}</p>
       <button type="button" className="btn" onClick={onRetry}>
-        Try again
+        {t("err.retry")}
       </button>
     </div>
   );
@@ -343,6 +346,7 @@ export function ChartTip({
   payload?: TipItem[];
   label?: string | number;
 }) {
+  const { fmt } = useI18n();
   if (!active || !payload?.length) return null;
   return (
     <div className="tip">
@@ -350,7 +354,7 @@ export function ChartTip({
       {payload.map((p, i) => (
         <div className="tip-row" key={i}>
           <i style={{ background: p.color }} />
-          <strong>{p.value}%</strong>
+          <strong>{fmt(Number(p.value))}%</strong>
           <span>{p.name}</span>
         </div>
       ))}

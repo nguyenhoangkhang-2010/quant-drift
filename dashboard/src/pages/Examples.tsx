@@ -19,7 +19,8 @@ import {
 import { useModel } from "../context";
 import { diffTokens, Tok } from "../diff";
 import { useAsync } from "../hooks";
-import { cap, cssVars, seriesColor, sortConfigs } from "../lib";
+import { useI18n } from "../i18n";
+import { cssVars, seriesColor, sortConfigs } from "../lib";
 
 const RANK: Record<string, number> = { dangerous: 0, benign: 1, no_drift: 2 };
 const TYPES = ["all", "dangerous", "benign", "no_drift"] as const;
@@ -56,6 +57,7 @@ function ExampleCard({
   index: number;
   onToggle: () => void;
 }) {
+  const { t, cat, explain } = useI18n();
   const meta = driftMeta(ex.drift_type);
   const diff = useMemo(() => diffTokens(ex.baseline_output, ex.quantized_output), [ex]);
   const severity = Math.round(ex.severity * 100);
@@ -65,7 +67,7 @@ function ExampleCard({
     <article className="ex" data-open={open} style={cssVars({ "--i": Math.min(index, 12) })}>
       <button type="button" className="ex-head" aria-expanded={open} aria-controls={bodyId} onClick={onToggle}>
         <span className="ex-id">{ex.prompt_id}</span>
-        <span className="tag">{cap(ex.category)}</span>
+        <span className="tag">{cat(ex.category)}</span>
         <DriftChip type={ex.drift_type} />
         <span className="ex-prompt">{ex.prompt_text}</span>
         <span className="ex-sev">
@@ -83,13 +85,13 @@ function ExampleCard({
             <p className="ex-q">{ex.prompt_text}</p>
             <div className="panels" style={cssVars({ "--mark": meta.wash })}>
               <div className="panel">
-                <div className="panel-h">Baseline · FP16</div>
+                <div className="panel-h">{t("ex.baseline")}</div>
                 <pre>
                   <Tokens toks={diff.a} />
                 </pre>
               </div>
               <div className="panel">
-                <div className="panel-h">Quantized · {ex.config_name.toUpperCase()}</div>
+                <div className="panel-h">{t("ex.quantized", { cfg: ex.config_name.toUpperCase() })}</div>
                 <pre>
                   <Tokens toks={diff.b} />
                 </pre>
@@ -97,7 +99,7 @@ function ExampleCard({
             </div>
             <p className="ex-note">
               <IconInfo size={14} />
-              {ex.explanation}
+              {explain(ex.explanation)}
             </p>
           </div>
         </div>
@@ -108,6 +110,7 @@ function ExampleCard({
 
 export default function Examples() {
   const { selected } = useModel();
+  const { t, cat } = useI18n();
   const [params, setParams] = useSearchParams();
 
   const cfgQ = useAsync(() => fetchConfigs(selected), [selected], selected !== "");
@@ -171,11 +174,7 @@ export default function Examples() {
   return (
     <>
       <ProgressBar active={busy} />
-      <PageHeader
-        eyebrow="02 · Examples"
-        title="Baseline versus quantized"
-        lede="Every prompt, side by side. Highlighted words are what the quantized model changed."
-      />
+      <PageHeader eyebrow={t("ex.eyebrow")} title={t("ex.title")} lede={t("ex.lede")} />
 
       {error ? (
         <ErrorState
@@ -186,31 +185,31 @@ export default function Examples() {
           }}
         />
       ) : cfgQ.data && configs.length === 0 ? (
-        <EmptyState title="Nothing to compare" hint="This model only has FP16 results. Run another quantization config." />
+        <EmptyState title={t("ex.nothingTitle")} hint={t("ex.nothingHint")} />
       ) : !exQ.data ? (
-        <Loading label="Loading examples" />
+        <Loading label={t("ex.loading")} />
       ) : (
         <div className={exQ.loading ? "is-refetching" : undefined}>
           <div className="filters">
             <div className="field">
-              <span className="eyebrow">Config</span>
+              <span className="eyebrow">{t("ex.config")}</span>
               <Segmented
-                label="Quantization config"
+                label={t("ex.cfgAria")}
                 value={config}
                 options={configs.map((c) => ({ value: c, label: c.toUpperCase(), color: seriesColor(c, configs) }))}
                 onChange={(v) => setParam("config", v)}
               />
             </div>
             <div className="field">
-              <span className="eyebrow">Task</span>
+              <span className="eyebrow">{t("ex.task")}</span>
               <Segmented
-                label="Task type"
+                label={t("ex.taskAria")}
                 value={category}
                 options={[
-                  { value: "all", label: "All", count: all.length },
+                  { value: "all", label: t("common.all"), count: all.length },
                   ...categories.map((c) => ({
                     value: c,
-                    label: cap(c),
+                    label: cat(c),
                     count: all.filter((e) => e.category === c).length,
                   })),
                 ]}
@@ -218,14 +217,14 @@ export default function Examples() {
               />
             </div>
             <div className="field">
-              <span className="eyebrow">Result</span>
+              <span className="eyebrow">{t("ex.result")}</span>
               <Segmented
-                label="Drift type"
+                label={t("ex.typeAria")}
                 value={type}
-                options={TYPES.map((t) =>
-                  t === "all"
-                    ? { value: t, label: "All", count: inCategory.length }
-                    : { value: t, label: DRIFTS[t].label, count: countType(t), color: DRIFTS[t].color }
+                options={TYPES.map((ty) =>
+                  ty === "all"
+                    ? { value: ty, label: t("common.all"), count: inCategory.length }
+                    : { value: ty, label: t(DRIFTS[ty].labelKey), count: countType(ty), color: DRIFTS[ty].color }
                 )}
                 onChange={(v) => setParam("type", v)}
               />
@@ -235,34 +234,32 @@ export default function Examples() {
           <section className="card reveal" style={{ padding: "16px 20px" }}>
             <SplitBar
               parts={[
-                { label: "No drift", value: countType("no_drift"), color: DRIFTS.no_drift.color },
-                { label: "Benign", value: countType("benign"), color: DRIFTS.benign.color },
-                { label: "Dangerous", value: countType("dangerous"), color: DRIFTS.dangerous.color },
+                { label: t("drift.no_drift"), value: countType("no_drift"), color: DRIFTS.no_drift.color },
+                { label: t("drift.benign"), value: countType("benign"), color: DRIFTS.benign.color },
+                { label: t("drift.dangerous"), value: countType("dangerous"), color: DRIFTS.dangerous.color },
               ]}
             />
           </section>
 
           <div className="toolbar">
-            <span>
-              Showing {shown.length} of {inCategory.length} prompts
-            </span>
+            <span>{t("ex.showing", { a: shown.length, b: inCategory.length })}</span>
             <div>
               <button
                 type="button"
                 className="btn btn-quiet"
                 onClick={() => setOpenIds(new Set(shown.map((e) => e.prompt_id)))}
               >
-                Expand all
+                {t("ex.expandAll")}
               </button>{" "}
               <button type="button" className="btn btn-quiet" onClick={() => setOpenIds(new Set())}>
-                Collapse all
+                {t("ex.collapseAll")}
               </button>
             </div>
           </div>
 
           {shown.length === 0 ? (
             <div className="ex-list">
-              <EmptyState title="No examples match" hint="Try another task type or result filter." />
+              <EmptyState title={t("ex.noMatchTitle")} hint={t("ex.noMatchHint")} />
             </div>
           ) : (
             <div className="ex-list">
