@@ -11,7 +11,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from .drift_detector import DriftDetector
 from .classifier import DriftType
-from .statistics import compute_task_stats, generate_recommendations
+from .statistics import compute_task_stats, generate_recommendations, verdict
 from .verifiers.semantic_verifier import SemanticVerifier
 
 
@@ -102,6 +102,7 @@ def get_heatmap(model: str):
                 "drift_rate": stat.drift_rate,
                 "dangerous_rate": stat.dangerous_rate,
                 "total": stat.total,
+                "verdict": verdict(stat.dangerous_rate),
             })
 
     return {"model": model, "baseline": "fp16", "heatmap": heatmap}

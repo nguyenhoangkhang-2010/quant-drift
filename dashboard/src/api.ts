@@ -2,6 +2,8 @@ import axios from "axios";
 
 const api = axios.create({ baseURL: "/api" });
 
+export type Verdict = "safe" | "caution" | "unsafe";
+
 export async function fetchModels(): Promise<string[]> {
   const res = await api.get("/models");
   return res.data.models;
@@ -18,6 +20,7 @@ export interface HeatmapCell {
   drift_rate: number;
   dangerous_rate: number;
   total: number;
+  verdict: Verdict;
 }
 
 export async function fetchHeatmap(model: string): Promise<HeatmapCell[]> {

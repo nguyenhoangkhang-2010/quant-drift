@@ -1,130 +1,163 @@
-import { useState, useEffect, createContext, useContext } from "react";
-import { BrowserRouter, Routes, Route, NavLink } from "react-router-dom";
+import { useCallback, useEffect, useState } from "react";
+import { BrowserRouter, NavLink, Route, Routes, useLocation } from "react-router-dom";
 import { fetchModels } from "./api";
-import Heatmap from "./pages/Heatmap";
+import {
+  BrandMark,
+  Chip,
+  DRIFTS,
+  EmptyState,
+  ErrorState,
+  IconDoc,
+  IconGrid,
+  IconMoon,
+  IconSplit,
+  IconSun,
+  Segmented,
+} from "./components";
+import { ModelContext, ThemeContext, useModel, useTheme } from "./context";
+import { useThemeState } from "./hooks";
 import Examples from "./pages/Examples";
+import Heatmap from "./pages/Heatmap";
 import Report from "./pages/Report";
 
-interface ModelCtx {
-  models: string[];
-  selected: string;
-  setSelected: (m: string) => void;
-}
+const NAV = [
+  { to: "/", label: "Heatmap", Icon: IconGrid, end: true },
+  { to: "/examples", label: "Examples", Icon: IconSplit, end: false },
+  { to: "/report", label: "Report", Icon: IconDoc, end: false },
+];
 
-export const ModelContext = createContext<ModelCtx>({
-  models: [],
-  selected: "",
-  setSelected: () => {},
-});
+const READING_GUIDE = [
+  { key: "no_drift", text: "Identical to the FP16 baseline." },
+  { key: "benign", text: "Reworded, but meaning and answer are intact." },
+  { key: "dangerous", text: "Wrong answer, broken code or lost meaning." },
+];
 
-export function useModel() {
-  return useContext(ModelContext);
-}
-
-function App() {
-  const [models, setModels] = useState<string[]>([]);
-  const [selected, setSelected] = useState("");
-
-  useEffect(() => {
-    fetchModels().then((m) => {
-      setModels(m);
-      if (m.length > 0) setSelected(m[0]);
-    });
-  }, []);
+function Shell() {
+  const { models, selected, setSelected, status, error, reload } = useModel();
+  const { theme, toggle } = useTheme();
+  const { pathname } = useLocation();
+  const next = theme === "dark" ? "light" : "dark";
 
   return (
-    <ModelContext.Provider value={{ models, selected, setSelected }}>
-      <BrowserRouter>
-        <div style={{ display: "flex", minHeight: "100vh" }}>
-          <nav
-            style={{
-              width: 240,
-              padding: "1.5rem 1rem",
-              background: "var(--bg-secondary)",
-              borderRight: "1px solid var(--border)",
-              display: "flex",
-              flexDirection: "column",
-            }}
-          >
-            <h1
-              style={{
-                fontSize: "1.125rem",
-                fontWeight: 700,
-                letterSpacing: "-0.025em",
-                marginBottom: "0.5rem",
-              }}
-            >
-              QuantDrift
-            </h1>
-            <p
-              style={{
-                fontSize: "0.75rem",
-                color: "var(--text-muted)",
-                marginBottom: "1.5rem",
-              }}
-            >
-              Quantization drift analyzer
-            </p>
+    <div className="shell">
+      <aside className="side">
+        <div className="brand">
+          <BrandMark />
+          <div>
+            <div className="brand-name">QuantDrift</div>
+            <div className="brand-sub">drift lab · v0.1</div>
+          </div>
+        </div>
 
-            <label
-              style={{
-                fontSize: "0.75rem",
-                color: "var(--text-muted)",
-                marginBottom: "0.375rem",
-                textTransform: "uppercase",
-                letterSpacing: "0.05em",
-              }}
-            >
-              Model
-            </label>
-            <select
-              value={selected}
-              onChange={(e) => setSelected(e.target.value)}
-              style={{ marginBottom: "1.5rem" }}
-            >
-              {models.map((m) => (
-                <option key={m} value={m}>
-                  {m}
-                </option>
-              ))}
-            </select>
+        <nav className="nav" aria-label="Primary">
+          {NAV.map(({ to, label, Icon, end }) => (
+            <NavLink key={to} to={to} end={end} className={({ isActive }) => (isActive ? "active" : undefined)}>
+              <Icon size={17} />
+              {label}
+            </NavLink>
+          ))}
+        </nav>
 
-            <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: "0.25rem" }}>
-              {[
-                { to: "/", label: "Heatmap" },
-                { to: "/examples", label: "Examples" },
-                { to: "/report", label: "Report" },
-              ].map(({ to, label }) => (
-                <li key={to}>
-                  <NavLink
-                    to={to}
-                    end={to === "/"}
-                    style={({ isActive }) => ({
-                      display: "block",
-                      padding: "0.5rem 0.75rem",
-                      borderRadius: "var(--radius)",
-                      color: isActive ? "var(--text-primary)" : "var(--text-secondary)",
-                      background: isActive ? "var(--bg-tertiary)" : "transparent",
-                      fontWeight: isActive ? 600 : 400,
-                      fontSize: "0.875rem",
-                    })}
-                  >
-                    {label}
-                  </NavLink>
+        <div className="side-foot">
+          <div className="legend-card">
+            <h2>How to read</h2>
+            <ul>
+              {READING_GUIDE.map((g) => (
+                <li key={g.key}>
+                  <Chip meta={DRIFTS[g.key]} />
+                  <p>{g.text}</p>
                 </li>
               ))}
             </ul>
-          </nav>
-          <main style={{ flex: 1, padding: "2rem", maxWidth: 1200, overflow: "auto" }}>
+          </div>
+          <button
+            type="button"
+            className="icon-btn"
+            onClick={toggle}
+            aria-label={`Switch to ${next} theme`}
+            title={`Switch to ${next} theme`}
+          >
+            {theme === "dark" ? <IconSun /> : <IconMoon />}
+          </button>
+        </div>
+      </aside>
+
+      <div className="main">
+        <header className="topbar">
+          <div className="topbar-model">
+            <span className="eyebrow">Model</span>
+            {models.length > 0 && (
+              <Segmented
+                label="Model"
+                value={selected}
+                options={models.map((m) => ({ value: m, label: m }))}
+                onChange={setSelected}
+              />
+            )}
+          </div>
+          <span className="baseline">baseline · fp16</span>
+        </header>
+
+        <div className="content" key={pathname}>
+          {status === "error" ? (
+            <ErrorState message={error ?? "Request failed"} onRetry={reload} />
+          ) : status === "ready" && models.length === 0 ? (
+            <EmptyState
+              title="No results yet"
+              hint="Run the benchmark, or generate the demo data with scripts/generate_sample_results.py."
+            />
+          ) : (
             <Routes>
               <Route path="/" element={<Heatmap />} />
               <Route path="/examples" element={<Examples />} />
               <Route path="/report" element={<Report />} />
             </Routes>
-          </main>
+          )}
         </div>
-      </BrowserRouter>
-    </ModelContext.Provider>
+      </div>
+    </div>
+  );
+}
+
+function App() {
+  const [models, setModels] = useState<string[]>([]);
+  const [selected, setSelected] = useState("");
+  const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
+  const [error, setError] = useState<string>();
+  const [tick, setTick] = useState(0);
+  const [theme, toggle] = useThemeState();
+
+  const reload = useCallback(() => setTick((t) => t + 1), []);
+
+  useEffect(() => {
+    let alive = true;
+    setStatus("loading");
+    setError(undefined);
+    fetchModels()
+      .then((m) => {
+        if (!alive) return;
+        setModels(m);
+        setSelected((s) => (m.includes(s) ? s : m[0] ?? ""));
+        setStatus("ready");
+      })
+      .catch((e: unknown) => {
+        if (!alive) return;
+        setError(e instanceof Error ? e.message : "Request failed");
+        setStatus("error");
+      });
+    return () => {
+      alive = false;
+    };
+  }, [tick]);
+
+  return (
+    <ThemeContext.Provider value={{ theme, toggle }}>
+      <ModelContext.Provider value={{ models, selected, setSelected, status, error, reload }}>
+        <BrowserRouter>
+          <Shell />
+        </BrowserRouter>
+      </ModelContext.Provider>
+    </ThemeContext.Provider>
   );
 }
 

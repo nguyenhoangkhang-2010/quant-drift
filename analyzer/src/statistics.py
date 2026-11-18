@@ -57,17 +57,30 @@ def compute_task_stats(drifts: list[DriftResult]) -> list[TaskStats]:
     return stats
 
 
+CAUTION_BELOW = 5.0
+
+
+def verdict(dangerous_rate: float) -> str:
+    """Map a dangerous-drift rate (%) to 'safe', 'caution' or 'unsafe'."""
+    if dangerous_rate == 0:
+        return "safe"
+    if dangerous_rate < CAUTION_BELOW:
+        return "caution"
+    return "unsafe"
+
+
 def generate_recommendations(all_stats: list[TaskStats]) -> list[str]:
     """Generate human-readable recommendations from stats."""
     recommendations = []
 
     for stat in all_stats:
-        if stat.dangerous_rate == 0:
+        level = verdict(stat.dangerous_rate)
+        if level == "safe":
             recommendations.append(
                 f"✅ {stat.config} SAFE for {stat.category} "
                 f"(drift {stat.drift_rate}%, all benign)"
             )
-        elif stat.dangerous_rate < 5:
+        elif level == "caution":
             recommendations.append(
                 f"🟡 {stat.config} CAUTION for {stat.category} "
                 f"({stat.dangerous_rate}% dangerous drift)"
