@@ -21,6 +21,26 @@ def test_extract_answer(text, expected):
     assert v.extract_answer(text) == pytest.approx(expected)
 
 
+@pytest.mark.parametrize(
+    ("text", "expected"),
+    [
+        (r"Therefore:\[\boxed{\frac{3}{8}}\]", 0.375),
+        (r"\boxed{\dfrac{3}{8}}", 0.375),
+        (r"\boxed{\frac{-3}{8}}", -0.375),
+        (r"We first get 375/1000 = 0.375, so \boxed{3/8}", 0.375),
+        (r"\boxed{1,234}", 1234.0),
+    ],
+)
+def test_boxed_answers_with_latex_fractions(text, expected):
+    """Regression: \\boxed{\\frac{3}{8}} used to be cut at the first '}' and misread."""
+    assert v.extract_answer(text) == pytest.approx(expected)
+
+
+def test_boxed_answer_wins_over_earlier_numbers():
+    text = r"\frac{375 \div 125}{1000 \div 125} = \frac{3}{8}" + "\n" + r"\boxed{\frac{3}{8}}"
+    assert v.extract_answer(text) == pytest.approx(0.375)
+
+
 def test_extract_answer_none_when_no_number():
     assert v.extract_answer("I do not know.") is None
 
