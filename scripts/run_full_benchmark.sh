@@ -1,33 +1,26 @@
 #!/usr/bin/env bash
+# Download a GGUF model and benchmark it at FP16, INT8 (Q8_0) and INT4 (Q4_K_M) on CPU.
+# Usage: bash scripts/run_full_benchmark.sh [model-name]   (default: qwen2.5-1.5b)
 set -euo pipefail
 
-MODEL="${1:-meta-llama/Meta-Llama-3.1-8B-Instruct}"
-OUTPUT_DIR="results/$(basename "$MODEL")"
-
-mkdir -p "$OUTPUT_DIR"
+MODEL="${1:-qwen2.5-1.5b}"
 
 echo "=== QuantDrift Full Benchmark ==="
 echo "Model: $MODEL"
-echo "Output: $OUTPUT_DIR"
 echo ""
 
-for config in configs/*.yaml; do
-    config_name=$(basename "$config" .yaml)
-    echo "--- Running config: $config_name ---"
+python scripts/download_gguf.py "$MODEL"
 
-    python -m runner.src.benchmark \
-        --model "$MODEL" \
-        --prompts prompts/ \
-        --configs "$config" \
-        --output "$OUTPUT_DIR/${config_name}.json" \
-        --temperature 0.0 \
-        --seed 42 \
-        --max-tokens 512
+python -m runner.src.benchmark \
+    --model "$MODEL" \
+    --prompts prompts/ \
+    --configs configs/gguf \
+    --output results \
+    --temperature 0.0 \
+    --seed 42 \
+    --max-tokens 512
 
-    echo "Saved: $OUTPUT_DIR/${config_name}.json"
-    echo ""
-done
-
+echo ""
 echo "=== Benchmark complete ==="
-echo "Results in: $OUTPUT_DIR/"
-echo "Start the analyzer: docker compose up analyzer dashboard"
+echo "Results in: results/$MODEL/"
+echo "View them: uvicorn analyzer.src.api:app --port 8000, then npm run dev in dashboard/"

@@ -21,7 +21,7 @@ class QuantConfig:
 
 
 def load_config(config_path: Path, model_name: str) -> QuantConfig:
-    with open(config_path) as f:
+    with open(config_path, encoding="utf-8") as f:
         raw = yaml.safe_load(f)
 
     model_path = raw.get("model_path", "").format(model=model_name)

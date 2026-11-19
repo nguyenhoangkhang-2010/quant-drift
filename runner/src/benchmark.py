@@ -133,7 +133,7 @@ def run_benchmark(
                 )))
 
         out_file = output_dir / f"{config_name}.json"
-        with open(out_file, "w") as f:
+        with open(out_file, "w", encoding="utf-8") as f:
             json.dump(results, f, indent=2, ensure_ascii=False)
 
         total_latency = sum(r["latency_ms"] for r in results)
