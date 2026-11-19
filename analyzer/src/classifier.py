@@ -2,8 +2,8 @@
 
 from enum import Enum
 
-from .verifiers.math_verifier import MathVerifier
 from .verifiers.code_verifier import CodeVerifier
+from .verifiers.math_verifier import MathVerifier
 from .verifiers.semantic_verifier import SemanticVerifier
 
 

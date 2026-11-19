@@ -1,10 +1,11 @@
 """Verify math answers: extract numeric answer and compare."""
 
 import re
+from typing import ClassVar
 
 
 class MathVerifier:
-    ANSWER_PATTERNS = [
+    ANSWER_PATTERNS: ClassVar[list[str]] = [
         r"\\boxed\{([^}]+)\}",
         r"boxed\{([^}]+)\}",
         r"(?:the answer is|answer:)\s*[*]*(-?[\d,]+\.?\d*/?\.?\d*)[*]*",
@@ -13,7 +14,7 @@ class MathVerifier:
         r"(-?[\d,]+\.?\d*/?\.?\d*)\s*$",
     ]
 
-    EXPRESSION_PATTERNS = [
+    EXPRESSION_PATTERNS: ClassVar[list[str]] = [
         r"(?:simplifies? to|equals?|=)\s*(.+?)(?:\.|$)",
         r"\\boxed\{(.+?)\}",
         r"boxed\{(.+?)\}",

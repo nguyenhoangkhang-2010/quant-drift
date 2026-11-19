@@ -1,8 +1,8 @@
 """Semantic similarity comparison using sentence embeddings."""
 
-import numpy as np
-
 import threading
+
+import numpy as np
 
 _model_cache: dict[str, object] = {}
 _model_lock = threading.Lock()

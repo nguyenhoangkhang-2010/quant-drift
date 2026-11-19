@@ -1,0 +1,407 @@
+[
+  {
+    "prompt_id": "chat_001",
+    "prompt_text": "Explain the difference between a stack and a queue in simple terms.",
+    "category": "chat",
+    "config_name": "int4",
+    "output": "A stack and a queue are both data structures used to store and manage data, but they differ in how they handle the insertion and removal of elements.\n\nA stack is a data structure that follows the Last-In-First-Out (LIFO) principle. This means that the last element added to the stack will be the first one to be removed. Think of it like a stack of plates - you can only add or remove plates from the top of the stack. The top of the stack is always the most recently added element.\n\nOn the other hand, a queue is a data structure that follows the First-In-First-Out (FIFO) principle. This means that the first element added to the queue will be the first one to be removed. Think of it like a line of people waiting for a ride - the first person in line will be the first one to get a ride.\n\nIn summary, a stack is like a stack of plates, where you can only add or remove elements from the top, while a queue is like a line of people waiting for a ride, where the first person in line will be the first one to get a ride.",
+    "latency_ms": 10202.69,
+    "tokens_generated": 231
+  },
+  {
+    "prompt_id": "chat_002",
+    "prompt_text": "What are three benefits of regular exercise?",
+    "category": "chat",
+    "config_name": "int4",
+    "output": "There are several benefits of regular exercise, including:\n\n1. Improved cardiovascular health: Regular exercise helps to strengthen the heart and improve its ability to pump blood throughout the body. This can help to lower blood pressure and reduce the risk of heart disease.\n\n2. Weight management: Exercise helps to burn calories and build muscle, which can help to maintain a healthy weight and reduce the risk of obesity.\n\n3. Improved mental health: Regular exercise has been shown to have a positive impact on mental health, including reducing symptoms of depression and anxiety. It can also help to improve mood and increase feelings of well-being.",
+    "latency_ms": 4751.17,
+    "tokens_generated": 120
+  },
+  {
+    "prompt_id": "chat_003",
+    "prompt_text": "Describe how a binary search algorithm works.",
+    "category": "chat",
+    "config_name": "int4",
+    "output": "A binary search algorithm is a very efficient search algorithm that works on sorted arrays or lists. Here's how it works:\n\n1. **Initialization**: Start with the entire array or list.\n\n2. **Find the Middle Element**: Determine the middle element of the current sub-array or sub-list.\n\n3. **Compare the Middle Element**:\n   - If the middle element is equal to the target value, the search is complete.\n   - If the middle element is greater than the target value, then the target value must be in the left half of the array or list.\n   - If the middle element is less than the target value, then the target value must be in the right half of the array or list.\n\n4. **Repeat the Process**: Repeat the process on the half of the array or list that contains the target value.\n\n5. **Repeat Until the Target is Found or the Sub-array is Empty**: Continue this process until the target value is found or the sub-array is empty.\n\n### Example\n\nSuppose we have an array of integers sorted in ascending order:\n\n```\n[1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 27, 29, 31, 33, 35, 37, 39, 41, 43, 45, 47, 49, 51, 53, 55, 57, 59, 61, 63, 65, 67, 69, 71, 73, 75, 77, 79, 81, 83, 85, 87, 89, 91, 93, 95, 97, 99]\n```\n\n**Target Value: 53**\n\n1. **Initialize**: The array is `[1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 27, 29, 31, 33, 35, 37, 39, 41, 43",
+    "latency_ms": 19064.73,
+    "tokens_generated": 512
+  },
+  {
+    "prompt_id": "chat_004",
+    "prompt_text": "What is the difference between HTTP and HTTPS?",
+    "category": "chat",
+    "config_name": "int4",
+    "output": "HTTP (Hypertext Transfer Protocol) and HTTPS (Hypertext Transfer Protocol Secure) are both protocols used for transmitting data over the internet. However, there are some key differences between them:\n\n1. Security: HTTPS is a secure version of HTTP that encrypts data transmitted between the client (web browser) and the server. This means that even if an attacker intercepts the data, they won't be able to read it. HTTP, on the other hand, is not secure and can be vulnerable to attacks such as man-in-the-middle (MITM) attacks.\n\n2. Encryption: HTTPS uses encryption to protect data, while HTTP does not. This means that HTTPS is more secure than HTTP.\n\n3. Protocol: HTTPS is a protocol that builds on top of HTTP, so it is always used with HTTP. HTTP is a protocol that is used to transmit data between a client and a server.\n\n4. Performance: HTTPS can be slower than HTTP because it requires additional encryption and decryption processes. However, this is usually not a problem for most users, as the benefits of security outweigh the performance impact.\n\nIn summary, HTTPS is a secure version of HTTP that encrypts data transmitted between the client and the server, making it more secure than HTTP.",
+    "latency_ms": 10853.87,
+    "tokens_generated": 251
+  },
+  {
+    "prompt_id": "chat_005",
+    "prompt_text": "Explain what Docker containers are and why they are useful.",
+    "category": "chat",
+    "config_name": "int4",
+    "output": "Docker containers are a lightweight, portable way to package and run applications. They are essentially a way to package an application with all of its dependencies and run it in a container. This allows developers to easily move their applications between different environments without worrying about the underlying infrastructure.\n\nDocker containers are useful for several reasons:\n\n1. Portability: Docker containers are platform-agnostic, meaning they can run on any operating system that supports Docker, such as Linux, Windows, or macOS. This makes it easy to move applications between different environments without worrying about the underlying infrastructure.\n\n2. Isolation: Docker containers provide isolation between different applications, which means that changes to one application will not affect other applications running in the same container. This helps to prevent conflicts and ensures that each application runs as intended.\n\n3. Efficiency: Docker containers are lightweight and efficient, meaning they use less resources than traditional virtual machines. This makes them ideal for running on cloud platforms, where resources are limited.\n\n4. Automation: Docker containers can be easily automated using Docker Compose or Kubernetes, making it easy to deploy and manage applications at scale.\n\nOverall, Docker containers provide a simple and efficient way to package and run applications, making it easier for developers to move their applications between different environments and ensure that they run as intended.",
+    "latency_ms": 10842.57,
+    "tokens_generated": 258
+  },
+  {
+    "prompt_id": "chat_006",
+    "prompt_text": "What are the SOLID principles in software engineering?",
+    "category": "chat",
+    "config_name": "int4",
+    "output": "The SOLID principles are a set of design principles that are commonly used in object-oriented programming. They are named after the first letter of each word in the phrase \"SOLID: Single Responsibility, Open/Closed, Liskov Substitution, Interface Segregation, and Dependency Inversion.\" These principles are designed to help ensure that software is well-designed and maintainable, and to prevent common design problems.\nThe SOLID principles are as follows:\n\n  1. Single Responsibility: A class should have only one reason to change, and should have only one reason to change.\n  2. Open/Closed: A class should be open for extension but closed for modification.\n  3. Liskov Substitution: Subclasses should be able to replace their superclass without affecting the correctness of the program.\n  4. Interface Segregation: Clients should not be forced to depend on methods they do not use.\n  5. Dependency Inversion: High-level modules should not depend on low-level modules; both should depend on abstractions.\n\nThese principles are important because they help ensure that software is well-designed, maintainable, and scalable. They also help prevent common design problems, such as tight coupling and poor separation of concerns.",
+    "latency_ms": 10446.18,
+    "tokens_generated": 248
+  },
+  {
+    "prompt_id": "chat_007",
+    "prompt_text": "Describe the CAP theorem in distributed systems.",
+    "category": "chat",
+    "config_name": "int4",
+    "output": "The CAP theorem, proposed by Eric Brewer, is a fundamental principle in distributed systems that describes the trade-offs between three key properties: Consistency, Availability, and Partition tolerance. These properties are often referred to as the \"CAP\" of the theorem.\n\n1. **Consistency**: In a distributed system, consistency means that all nodes in the system see the same data at the same time. This is important for ensuring that all nodes have the same view of the data, which is crucial for maintaining the integrity of the system.\n\n2. **Availability**: Availability means that the system is available to provide service to clients. In other words, the system must be able to respond to requests from clients. This is important for ensuring that the system is responsive and can handle a high volume of requests.\n\n3. **Partition tolerance**: Partition tolerance means that the system can continue to function even if some nodes in the system are unavailable. This is important for ensuring that the system can continue to operate even if some nodes fail or are unavailable due to network partitions or other reasons.\n\nThe CAP theorem states that these three properties cannot be achieved simultaneously in a distributed system. Instead, a system must choose two of these properties, and the third property will be compromised. The three possible combinations are:\n\n- **Consistency and Availability**: This is the most common choice. In this case, the system is available to provide service to clients, but the data may not be consistent across all nodes. This is often referred to as a \"weak\" consistency model.\n- **Consistency and Partition tolerance**: This is less common but is possible. In this case, the system is available to provide service to clients, but the system may not be consistent across all nodes due to network partitions or other reasons.\n- **Availability and Partition tolerance**: This is the least common choice. In this case, the system is available to provide service to clients, but the system may not be consistent across all nodes due to network partitions or other reasons.\n\nThe CAP theorem is important because it helps system designers understand the trade-offs between these properties and choose the most appropriate model for their system. It also helps system designers understand that achieving all three properties simultaneously is not possible and that they must choose two of them and compromise on the third.",
+    "latency_ms": 23087.81,
+    "tokens_generated": 456
+  },
+  {
+    "prompt_id": "chat_008",
+    "prompt_text": "What is the difference between SQL and NoSQL databases?",
+    "category": "chat",
+    "config_name": "int4",
+    "output": "SQL (Structured Query Language) and NoSQL (Not Only SQL) are two different types of databases used for storing and managing data. Here are some key differences between them:\n\n1. Structure: SQL databases are structured, meaning they have a predefined schema or structure that defines the format of the data. NoSQL databases, on the other hand, are more flexible and can store data in various formats, including unstructured data.\n\n2. Data Model: SQL databases use a relational data model, which organizes data into tables with predefined relationships between them. NoSQL databases use a variety of data models, including key-value stores, document databases, and graph databases.\n\n3. Query Language: SQL databases use a query language called SQL (Structured Query Language) to retrieve and manipulate data. NoSQL databases use different query languages, such as MongoDB's query language, or CouchDB's query language.\n\n4. Scalability: SQL databases are typically more scalable than NoSQL databases. SQL databases can be easily scaled by adding more servers to the database, while NoSQL databases may require changes to the data model or schema to accommodate scaling.\n\n5. Performance: SQL databases are generally faster and more efficient than NoSQL databases, especially for complex queries and large datasets. NoSQL databases may be slower and less efficient for certain types of queries, especially for large datasets.\n\n6. Data Types: SQL databases have a limited set of data types, such as integers, strings, and dates. NoSQL databases have a much wider range of data types, including nested documents, arrays, and maps.\n\nIn summary, SQL databases are structured and relational, while NoSQL databases are flexible and can store data in various formats. The choice between the two depends on the specific needs of the application and the type of data being stored.",
+    "latency_ms": 24428.16,
+    "tokens_generated": 360
+  },
+  {
+    "prompt_id": "chat_009",
+    "prompt_text": "Explain what an API gateway is and when to use one.",
+    "category": "chat",
+    "config_name": "int4",
+    "output": "An API gateway is a system that acts as a front-end for an API, providing a single entry point for clients to access the API. It acts as a proxy between the client and the API, handling authentication, authorization, and routing requests to the appropriate backend services.\n\nWhen to use an API gateway:\n\n1. **Security**: An API gateway can enforce security policies, such as rate limiting, authentication, and authorization. It can also provide a secure way to access APIs, especially when dealing with sensitive data.\n\n2. **Scalability**: An API gateway can handle a large number of requests and scale up or down as needed. It can distribute traffic across multiple backend services, improving the performance of the API.\n\n3. **Load Balancing**: An API gateway can distribute traffic across multiple backend services, improving the performance of the API and reducing the load on any single backend service.\n\n4. **API Management**: An API gateway can manage the API, including versioning, documentation, and monitoring. It can also provide a way to manage API keys and tokens.\n\n5. **API Discovery**: An API gateway can provide a way to discover and manage APIs, including listing available APIs, retrieving documentation, and managing API keys.\n\n6. **API Versioning**: An API gateway can manage API versioning, allowing different versions of an API to be served to different clients.\n\n7. **API Monitoring**: An API gateway can provide monitoring and logging of API usage, allowing you to track the performance of your API and identify any issues.\n\nIn summary, an API gateway is a system that provides a single entry point for clients to access an API, handling security, scalability, load balancing, and other important functions. It is particularly useful when dealing with large numbers of requests, sensitive data, and complex API management requirements.",
+    "latency_ms": 21743.71,
+    "tokens_generated": 362
+  },
+  {
+    "prompt_id": "chat_010",
+    "prompt_text": "What is eventual consistency and when is it acceptable?",
+    "category": "chat",
+    "config_name": "int4",
+    "output": "Eventual consistency is a property of distributed systems where updates to a database are not immediately propagated to all nodes. Instead, updates are propagated incrementally, and eventually, all nodes will have the same data. This is in contrast to strong consistency, where updates are propagated immediately and all nodes have the same data at the same time.\n\nEventual consistency is acceptable when:\n\n1. **Performance**: In high-traffic scenarios, where updates are frequent and the system needs to handle a large number of transactions, eventual consistency can be more efficient than strong consistency. It allows the system to scale better and handle more concurrent requests.\n\n2. **Scalability**: In distributed systems, where the number of nodes can be large and the network can be slow, eventual consistency can help the system scale better. It allows the system to handle more nodes and more data without requiring immediate consistency.\n\n3. **Data Availability**: In some cases, it may be acceptable to have some nodes with outdated data. For example, in a system where users can access the system from different locations, eventual consistency can ensure that users in different locations have the most up-to-date data.\n\n4. **Consistency Level**: In some distributed database systems, you can choose a consistency level that balances between strong consistency and eventual consistency. For example, in a system that uses a \"strong\" consistency level, updates are propagated immediately, but in a system that uses a \"weak\" consistency level, updates are propagated incrementally, and eventually, all nodes will have the same data.\n\nHowever, it's important to note that eventual consistency can lead to some inconsistencies if not managed properly. For example, if a user makes an update to a database, and then another user makes an update to the same data, the updates may not be propagated to all nodes immediately, leading to inconsistencies. Therefore, it's important to design your system to handle these inconsistencies and ensure that they are resolved as soon as possible.",
+    "latency_ms": 23039.25,
+    "tokens_generated": 391
+  },
+  {
+    "prompt_id": "code_001",
+    "prompt_text": "Write a Python function that returns the nth Fibonacci number.",
+    "category": "code",
+    "config_name": "int4",
+    "output": "Certainly! The Fibonacci sequence is a series of numbers where each number is the sum of the two preceding ones, usually starting with 0 and 1. Here's a Python function that calculates the nth Fibonacci number:\n\n```python\ndef fibonacci(n):\n    if n <= 0:\n        return 0\n    elif n == 1:\n        return 1\n    else:\n        a, b = 0, 1\n        for _ in range(2, n + 1):\n            a, b = b, a + b\n        return b\n\n# Example usage:\nn = 10\nprint(f\"The {n}th Fibonacci number is: {fibonacci(n)}\")\n```\n\n### Explanation:\n- The function `fibonacci(n)` takes an integer `n` as input.\n- If `n` is less than or equal to 0, it returns 0.\n- If `n` is 1, it returns 1.\n- For any other value of `n`, the function calculates the Fibonacci number iteratively using a loop.\n- The loop runs from 2 to `n`, updating the values of `a` and `b` to compute the next Fibonacci number.\n- Finally, it returns the value of `b`, which is the nth Fibonacci number.\n\n### Example:\nIf you call `fibonacci(10)`, it will return `55`, which is the 10th Fibonacci number.",
+    "latency_ms": 21312.13,
+    "tokens_generated": 297
+  },
+  {
+    "prompt_id": "code_002",
+    "prompt_text": "Write a Python function that checks if a string is a palindrome.",
+    "category": "code",
+    "config_name": "int4",
+    "output": "Certainly! A palindrome is a word, phrase, number, or other sequence of characters that reads the same backward as forward, ignoring spaces, punctuation, and capitalization. Here's a Python function that checks if a given string is a palindrome:\n\n```python\ndef is_palindrome(s):\n    # Remove non-alphanumeric characters and convert to lowercase\n    cleaned = ''.join(char.lower() for char in s if char.isalnum())\n    \n    # Check if the cleaned string is equal to its reverse\n    return cleaned == cleaned[::-1]\n\n# Example usage:\nprint(is_palindrome(\"A man, a plan, a canal: Panama\"))  # True\nprint(is_palindrome(\"racecar\"))  # True\nprint(is_palindrome(\"hello\"))  # False\nprint(is_palindrome(\"Was it a car or a cat I saw?\"))  # True\n```\n\n### Explanation:\n1. **Cleaning the String**: We use a generator expression inside the `join` method to remove any non-alphanumeric characters and convert the entire string to lowercase. This ensures that the comparison is case-insensitive and ignores punctuation.\n2. **Checking for Palindrome**: We then check if the cleaned string is equal to its reverse. If it is, the string is a palindrome.\n\nThis function should work for most common palindromic strings, but it may not handle very long or complex palindromes correctly due to the limitations of string manipulation in Python.",
+    "latency_ms": 25202.13,
+    "tokens_generated": 295
+  },
+  {
+    "prompt_id": "code_003",
+    "prompt_text": "Write a Python function that returns the factorial of n.",
+    "category": "code",
+    "config_name": "int4",
+    "output": "Certainly! Below is a Python function that calculates the factorial of a given number `n`:\n\n```python\ndef factorial(n):\n    if n == 0:\n        return 1\n    else:\n        return n * factorial(n - 1)\n\n# Example usage:\nn = 5\nresult = factorial(n)\nprint(f\"The factorial of {n} is {result}\")\n```\n\n### Explanation:\n- The function `factorial` takes an integer `n` as input.\n- If `n` is 0, the function returns 1 because the factorial of 0 is defined as 1.\n- Otherwise, the function recursively calls itself with `n - 1` and multiplies the result by `n`.\n\n### Example:\n- If `n = 5`, the function will calculate `5 * 4 * 3 * 2 * 1`, which equals 120.\n- The function will return 120.\n\n### Note:\n- This implementation uses recursion, which can be inefficient for large values of `n` due to the exponential growth of function calls.\n- For larger values of `n`, consider using an iterative approach or a more efficient algorithm like the `math.factorial` function from the Python standard library.",
+    "latency_ms": 14646.19,
+    "tokens_generated": 256
+  },
+  {
+    "prompt_id": "code_004",
+    "prompt_text": "Write a Python function to reverse a linked list. Represent the list as a Python list and reverse it in place.",
+    "category": "code",
+    "config_name": "int4",
+    "output": "To reverse a linked list represented as a Python list in place, you can follow these steps:\n\n1. Reverse the order of the elements in the list.\n2. Update the `next` pointers to reverse the direction of the links.\n\nHere's a Python function that accomplishes this:\n\n```python\nclass ListNode:\n    def __init__(self, value=0, next=None):\n        self.value = value\n        self.next = next\n\ndef reverse_linked_list(head):\n    # Reverse the linked list in place\n    prev = None\n    current = head\n    while current:\n        next_node = current.next\n        current.next = prev\n        prev = current\n        current = next_node\n    return prev\n\n# Example usage:\n# Creating a linked list: 1 -> 2 -> 3 -> 4\nhead = ListNode(1, ListNode(2, ListNode(3, ListNode(4))))\nreversed_head = reverse_linked_list(head)\nprint(\"Reversed linked list:\", end=\" \")\nwhile reversed_head:\n    print(reversed_head.value, end=\" -> \")\n    reversed_head = reversed_head.next\nprint(\"None\")\n```\n\n### Explanation:\n1. **ListNode Class**: This class defines a node in the linked list, with `value` and `next` attributes.\n2. **reverse_linked_list Function**:\n   - `prev` is initialized to `None` to act as the new head of the reversed list.\n   - `current` starts at the head of the original list.\n   - The while loop continues until `current` is `None`.\n   - Inside the loop, `next_node` is set to the next node in the original list.\n   - `current.next` is set to `prev`, reversing the direction of the link.\n   - `prev` is updated to `current`, and `current` is updated to `next_node`.\n   - The loop continues until all nodes are processed.\n   - Finally, the function returns the new head of the reversed list (`prev`).\n\n### Example:\nFor the linked list `1 -> 2 -> 3 -> 4`, the function will reverse it to `4 -> 3 -> 2 -> 1`.\n\nThis approach ensures that the list is reversed in place without creating a new list.",
+    "latency_ms": 22257.87,
+    "tokens_generated": 466
+  },
+  {
+    "prompt_id": "code_005",
+    "prompt_text": "Write a Python function that finds the two numbers in a list that add up to a target sum.",
+    "category": "code",
+    "config_name": "int4",
+    "output": "Certainly! Below is a Python function that finds two numbers in a list that add up to a target sum:\n\n```python\ndef find_two_sum(numbers, target):\n    \"\"\"\n    Finds two numbers in a list that add up to a target sum.\n\n    :param numbers: List of integers\n    :param target: Target sum\n    :return: A tuple containing the two numbers that add up to the target sum\n    \"\"\"\n    # Create a dictionary to store the complement of each number\n    complements = {}\n    \n    # Iterate through the list\n    for i, num in enumerate(numbers):\n        # Calculate the complement of the current number\n        complement = target - num\n        \n        # Check if the complement is already in the dictionary\n        if complement in complements:\n            # Return the pair of numbers\n            return (complements[complement], i)\n        \n        # Store the complement in the dictionary\n        complements[num] = i\n    \n    # If no pair is found, return None\n    return None\n\n# Example usage:\nnumbers = [2, 7, 11, 15]\ntarget = 9\nresult = find_two_sum(numbers, target)\nprint(result)  # Output should be (1, 0) since 2 + 7 = 9\n```\n\n### Explanation:\n1. **Dictionary Initialization**: We create a dictionary `complements` to store the complement of each number. The key is the number, and the value is its index in the list.\n2. **Iterate Through List**: We iterate through the list of numbers.\n3. **Calculate Complement**: For each number, we calculate its complement (i.e., `target - num`).\n4. **Check Complement**: If the complement is already in the dictionary, it means we have found the pair of numbers that add up to the target sum.\n5. **Store Complement**: If the complement is not in the dictionary, we store the current number and its index.\n6. **Return Result**: If we find a pair, we return it. If no pair is found, we return `None`.\n\nThis function will return the indices of the two numbers that add up to the target sum. If no such pair exists, it returns `None`.",
+    "latency_ms": 23199.18,
+    "tokens_generated": 466
+  },
+  {
+    "prompt_id": "code_006",
+    "prompt_text": "Write a Python function that counts the number of vowels in a string.",
+    "category": "code",
+    "config_name": "int4",
+    "output": "Certainly! Below is a Python function that counts the number of vowels in a given string:\n\n```python\ndef count_vowels(input_string):\n    # Define a set of vowels for quick lookup\n    vowels = set('aeiouAEIOU')\n    \n    # Initialize a counter for vowels\n    vowel_count = 0\n    \n    # Iterate through each character in the input string\n    for char in input_string:\n        # Check if the character is a vowel\n        if char in vowels:\n            # Increment the vowel counter\n            vowel_count += 1\n    \n    # Return the total count of vowels\n    return vowel_count\n\n# Example usage:\ninput_str = \"Hello, World!\"\nprint(\"Number of vowels:\", count_vowels(input_str))\n```\n\n### Explanation:\n1. **Set of Vowels**: We define a set of vowels (`'aeiouAEIOU'`) to quickly check if a character is a vowel.\n2. **Counter Initialization**: We initialize a counter (`vowel_count`) to keep track of the number of vowels.\n3. **Iterate Through String**: We iterate through each character in the input string.\n4. **Check Vowel**: For each character, we check if it is in the set of vowels.\n5. **Increment Counter**: If the character is a vowel, we increment the counter.\n6. **Return Result**: Finally, we return the total count of vowels.\n\n### Example:\nFor the input string `\"Hello, World!\"`, the function will return `3`, as there are three vowels (`'e', 'o', 'o'`) in the string.",
+    "latency_ms": 18419.61,
+    "tokens_generated": 331
+  },
+  {
+    "prompt_id": "code_007",
+    "prompt_text": "Write a Python function to find the greatest common divisor of two numbers.",
+    "category": "code",
+    "config_name": "int4",
+    "output": "Certainly! The greatest common divisor (GCD) of two numbers is the largest number that divides both of them without leaving a remainder. Here's a Python function to find the GCD of two numbers using the Euclidean algorithm:\n\n```python\ndef gcd(a, b):\n    \"\"\"\n    Calculate the greatest common divisor of two numbers a and b.\n    \n    Parameters:\n    a (int): First number\n    b (int): Second number\n    \n    Returns:\n    int: The greatest common divisor of a and b\n    \"\"\"\n    while b != 0:\n        a, b = b, a % b\n    return a\n\n# Example usage:\nprint(gcd(48, 18))  # Output: 6\nprint(gcd(7, 5))    # Output: 1\n```\n\n### Explanation:\n1. **While Loop**: The `while` loop continues until `b` becomes zero.\n2. **Modulo Operation**: In each iteration, `a` is updated to `b`, and `b` is updated to the remainder of `a` divided by `b`.\n3. **Return**: Once `b` becomes zero, `a` contains the GCD of the original `a` and `b`.\n\nThis function works efficiently for finding the GCD of two numbers.",
+    "latency_ms": 15504.85,
+    "tokens_generated": 271
+  },
+  {
+    "prompt_id": "code_008",
+    "prompt_text": "Write a Python function that flattens a nested list.",
+    "category": "code",
+    "config_name": "int4",
+    "output": "Certainly! Below is a Python function that flattens a nested list. The function uses recursion to handle nested lists of arbitrary depth.\n\n```python\ndef flatten(nested_list):\n    \"\"\"\n    Flattens a nested list into a single list.\n\n    :param nested_list: A list that may contain other lists as elements.\n    :return: A flattened list.\n    \"\"\"\n    flattened_list = []\n    for element in nested_list:\n        if isinstance(element, list):\n            # If the element is a list, recursively flatten it and add to the result\n            flattened_list.extend(flatten(element))\n        else:\n            # If the element is not a list, add it to the result\n            flattened_list.append(element)\n    return flattened_list\n\n# Example usage:\nnested_list = [1, [2, [3, 4], 5], 6, [[7], 8]]\nflattened_list = flatten(nested_list)\nprint(flattened_list)  # Output: [1, 2, 3, 4, 5, 6, 7, 8]\n```\n\n### Explanation:\n1. **Input**: The function `flatten` takes a single argument `nested_list`, which is expected to be a list that may contain other lists as elements.\n2. **Base Case**: If the element is not a list, it is added directly to the result list.\n3. **Recursive Case**: If the element is a list, the function is called recursively on that list, and the result of that call is extended to the final result list.\n4. **Return**: The function returns the flattened list.\n\n### Example:\n- For `nested_list = [1, [2, [3, 4], 5], 6, [[7], 8]]`, the function will return `[1, 2, 3, 4, 5, 6, 7, 8]`.\n\nThis function handles nested lists of arbitrary depth and ensures that all elements are included in the final flattened list.",
+    "latency_ms": 24476.41,
+    "tokens_generated": 418
+  },
+  {
+    "prompt_id": "code_009",
+    "prompt_text": "Write a Python function that returns True if a number is prime.",
+    "category": "code",
+    "config_name": "int4",
+    "output": "Certainly! Here's a Python function that checks if a number is prime:\n\n```python\ndef is_prime(n):\n    \"\"\"\n    Check if a number is prime.\n    \n    Parameters:\n    n (int): The number to check.\n    \n    Returns:\n    bool: True if the number is prime, False otherwise.\n    \"\"\"\n    if n <= 1:\n        return False\n    if n <= 3:\n        return True\n    if n % 2 == 0 or n % 3 == 0:\n        return False\n    i = 5\n    while i * i <= n:\n        if n % i == 0 or n % (i + 2) == 0:\n            return False\n        i += 6\n    return True\n\n# Example usage:\nprint(is_prime(29))  # Output: True\nprint(is_prime(10))  # Output: False\nprint(is_prime(2))   # Output: True\nprint(is_prime(17))  # Output: True\nprint(is_prime(18))  # Output: False\n```\n\n### Explanation:\n1. **Base Cases**:\n   - If `n` is less than or equal to 1, it is not prime.\n   - If `n` is 2 or 3, it is prime.\n\n2. **Divisibility Check**:\n   - If `n` is divisible by 2 or 3, it is not prime.\n\n3. **Loop for Larger Numbers**:\n   - We start checking from 5 and increment by 6 (i.e., 5, 11, 17, ...).\n   - For each number `i`, we check if `n` is divisible by `i` or `i + 2`.\n   - If `n` is divisible by any of these numbers, it is not prime.\n\nThis function efficiently checks for primality by skipping unnecessary checks and focusing on the most common factors.",
+    "latency_ms": 19342.6,
+    "tokens_generated": 409
+  },
+  {
+    "prompt_id": "code_010",
+    "prompt_text": "Write a Python function that sorts a list using bubble sort.",
+    "category": "code",
+    "config_name": "int4",
+    "output": "Certainly! Below is a Python function that implements the Bubble Sort algorithm to sort a list:\n\n```python\ndef bubble_sort(arr):\n    n = len(arr)\n    # Traverse through all array elements\n    for i in range(n):\n        # Last i elements are already in place\n        for j in range(0, n-i-1):\n            # Swap if the element found is greater than the next element\n            if arr[j] > arr[j+1]:\n                arr[j], arr[j+1] = arr[j+1], arr[j]\n\n# Example usage:\nexample_list = [64, 34, 25, 12, 22, 11, 90]\nbubble_sort(example_list)\nprint(\"Sorted array is:\", example_list)\n```\n\n### Explanation:\n- **Outer Loop**: Runs `n` times, where `n` is the length of the array. This loop ensures that the largest element \"bubbles\" to the end of the array.\n- **Inner Loop**: Runs `n-i-1` times for the first pass, `n-i-2` times for the second pass, and so on. This loop ensures that the smallest elements \"bubble\" to the beginning of the array.\n- **Swapping**: If the element at `j` is greater than the element at `j+1`, they are swapped.\n\n### Example:\nFor the list `[64, 34, 25, 12, 22, 11, 90]`, the function will sort it as follows:\n- First pass: `[34, 64, 25, 12, 22, 11, 90]`\n- Second pass: `[34, 25, 64, 12, 22, 11, 90]`\n- Third pass: `[34, 25, 12, 64, 22, 11, 90]`\n- Fourth pass: `[34, 25, 12, 22, 64, 11, 90]`\n- Fifth pass: `[34, 25, 12, 22, 11, 64, 90]`\n- Sixth pass: `[34, 25, 12, 22",
+    "latency_ms": 29803.16,
+    "tokens_generated": 512
+  },
+  {
+    "prompt_id": "math_001",
+    "prompt_text": "What is 17 * 24?",
+    "category": "math",
+    "config_name": "int4",
+    "output": "17 * 24 = 336",
+    "latency_ms": 643.59,
+    "tokens_generated": 11
+  },
+  {
+    "prompt_id": "math_002",
+    "prompt_text": "Solve for x: 3x + 7 = 22",
+    "category": "math",
+    "config_name": "int4",
+    "output": "To solve the equation \\(3x + 7 = 22\\) for \\(x\\), follow these steps:\n\n1. **Subtract 7 from both sides** to isolate the term with \\(x\\):\n   \\[\n   3x + 7 - 7 = 22 - 7\n   \\]\n   Simplifying this, we get:\n   \\[\n   3x = 15\n   \\]\n\n2. **Divide both sides by 3** to solve for \\(x\\):\n   \\[\n   \\frac{3x}{3} = \\frac{15}{3}\n   \\]\n   Simplifying this, we get:\n   \\[\n   x = 5\n   \\]\n\nSo, the solution is \\(x = 5\\).",
+    "latency_ms": 7818.88,
+    "tokens_generated": 165
+  },
+  {
+    "prompt_id": "math_003",
+    "prompt_text": "What is the square root of 144?",
+    "category": "math",
+    "config_name": "int4",
+    "output": "The square root of 144 is 12.",
+    "latency_ms": 768.9,
+    "tokens_generated": 13
+  },
+  {
+    "prompt_id": "math_004",
+    "prompt_text": "Calculate 15% of 240.",
+    "category": "math",
+    "config_name": "int4",
+    "output": "To calculate 15% of 240, you can follow these steps:\n\n1. Convert the percentage to a decimal. Since 15% is the same as 15 out of 100, you can write it as 0.15.\n2. Multiply the decimal by the number you want to find the percentage of. In this case, you multiply 0.15 by 240.\n\nSo, the calculation is:\n\n\\[ 0.15 \\times 240 = 36 \\]\n\nTherefore, 15% of 240 is 36.",
+    "latency_ms": 6208.42,
+    "tokens_generated": 130
+  },
+  {
+    "prompt_id": "math_005",
+    "prompt_text": "What is 2^10?",
+    "category": "math",
+    "config_name": "int4",
+    "output": "2^10 is equal to 1024.",
+    "latency_ms": 696.42,
+    "tokens_generated": 13
+  },
+  {
+    "prompt_id": "math_006",
+    "prompt_text": "If a triangle has sides 3, 4, and 5, what is its area?",
+    "category": "math",
+    "config_name": "int4",
+    "output": "To find the area of a triangle with sides of lengths 3, 4, and 5, we can use the fact that these side lengths form a right triangle. In a right triangle, the area can be calculated using the formula:\n\n\\[\n\\text{Area} = \\frac{1}{2} \\times \\text{base} \\times \\text{height}\n\\]\n\nHere, the base and height can be taken as the two legs of the right triangle, which are 3 and 4. So, we can substitute these values into the formula:\n\n\\[\n\\text{Area} = \\frac{1}{2} \\times 3 \\times 4 = \\frac{1}{2} \\times 12 = 6\n\\]\n\nTherefore, the area of the triangle is \\(\\boxed{6}\\).",
+    "latency_ms": 8341.44,
+    "tokens_generated": 174
+  },
+  {
+    "prompt_id": "math_007",
+    "prompt_text": "What is the sum of the first 10 positive integers?",
+    "category": "math",
+    "config_name": "int4",
+    "output": "The sum of the first 10 positive integers can be calculated using the formula for the sum of an arithmetic series. The formula for the sum \\( S \\) of the first \\( n \\) positive integers is:\n\n\\[ S = \\frac{n(n + 1)}{2} \\]\n\nFor the first 10 positive integers, \\( n = 10 \\). Plugging this into the formula gives:\n\n\\[ S = \\frac{10(10 + 1)}{2} = \\frac{10 \\times 11}{2} = \\frac{110}{2} = 55 \\]\n\nSo, the sum of the first 10 positive integers is 55.",
+    "latency_ms": 7034.99,
+    "tokens_generated": 150
+  },
+  {
+    "prompt_id": "math_008",
+    "prompt_text": "Simplify: (x^2 - 9) / (x - 3)",
+    "category": "math",
+    "config_name": "int4",
+    "output": "To simplify the expression \\(\\frac{x^2 - 9}{x - 3}\\), we can follow these steps:\n\n1. **Recognize the difference of squares in the numerator:**\n   The numerator \\(x^2 - 9\\) is a difference of squares, which can be factored as:\n   \\[\n   x^2 - 9 = (x + 3)(x - 3)\n   \\]\n\n2. **Rewrite the expression using the factored form:**\n   Substitute the factored form of the numerator into the original expression:\n   \\[\n   \\frac{x^2 - 9}{x - 3} = \\frac{(x + 3)(x - 3)}{x - 3}\n   \\]\n\n3. **Cancel the common factor:**\n   Notice that the factor \\(x - 3\\) appears in both the numerator and the denominator. We can cancel this common factor, provided \\(x \\neq 3\\) (to avoid division by zero):\n   \\[\n   \\frac{(x + 3)(x - 3)}{x - 3} = x + 3\n   \\]\n\nTherefore, the simplified form of the expression is:\n\\[\n\\boxed{x + 3}\n\\]",
+    "latency_ms": 12517.67,
+    "tokens_generated": 263
+  },
+  {
+    "prompt_id": "math_009",
+    "prompt_text": "What is 7! (7 factorial)?",
+    "category": "math",
+    "config_name": "int4",
+    "output": "The factorial of 7, denoted as 7!, is calculated by multiplying all positive integers from 1 to 7. So, 7! = 7 × 6 × 5 × 4 × 3 × 2 × 1 = 5040.",
+    "latency_ms": 2823.47,
+    "tokens_generated": 59
+  },
+  {
+    "prompt_id": "math_010",
+    "prompt_text": "Convert 0.375 to a fraction in lowest terms.",
+    "category": "math",
+    "config_name": "int4",
+    "output": "To convert the decimal 0.375 to a fraction in its lowest terms, follow these steps:\n\n1. **Express the decimal as a fraction:**\n   \\[\n   0.375 = \\frac{375}{1000}\n   \\]\n\n2. **Simplify the fraction by finding the greatest common divisor (GCD) of the numerator and the denominator.**\n\n   - The numerator is 375.\n   - The denominator is 1000.\n\n   To find the GCD, we can use the Euclidean algorithm or prime factorization. Let's use prime factorization:\n\n   - Prime factorization of 375:\n     \\[\n     375 = 3 \\times 5^3\n     \\]\n   - Prime factorization of 1000:\n     \\[\n     1000 = 2^3 \\times 5^3\n     \\]\n\n   The common factors are \\(5^3\\). Therefore, the GCD is:\n   \\[\n   \\text{GCD} = 5^3 = 125\n   \\]\n\n3. **Divide both the numerator and the denominator by the GCD:**\n   \\[\n   \\frac{375 \\div 125}{1000 \\div 125} = \\frac{3}{8}\n   \\]\n\n4. **Verify that the fraction is in its lowest terms:**\n   - The numerator is 3.\n   - The denominator is 8.\n   - The GCD of 3 and 8 is 1, confirming that the fraction is in its lowest terms.\n\nThus, the fraction in its lowest terms is:\n\\[\n\\boxed{\\frac{3}{8}}\n\\]",
+    "latency_ms": 17675.9,
+    "tokens_generated": 375
+  },
+  {
+    "prompt_id": "sum_001",
+    "prompt_text": "Summarize in one sentence: Photosynthesis is the process by which green plants and some other organisms use sunlight to synthesize foods from carbon dioxide and water. Photosynthesis in plants generally involves the green pigment chlorophyll and generates oxygen as a byproduct.",
+    "category": "summarization",
+    "config_name": "int4",
+    "output": "Photosynthesis is the process by which green plants and some other organisms use sunlight to synthesize food from carbon dioxide and water, generating oxygen as a byproduct.",
+    "latency_ms": 2004.4,
+    "tokens_generated": 32
+  },
+  {
+    "prompt_id": "sum_002",
+    "prompt_text": "Summarize in one sentence: The Industrial Revolution was the transition to new manufacturing processes in Great Britain, continental Europe, and the United States, in the period from about 1760 to 1820-1840. This transition included going from hand production methods to machines, new chemical manufacturing and iron production processes, the increasing use of steam power and water power, the development of machine tools, and the rise of the mechanized factory system.",
+    "category": "summarization",
+    "config_name": "int4",
+    "output": "The Industrial Revolution was a period of significant technological and economic change in Great Britain, continental Europe, and the United States, characterized by the shift from hand production methods to machines, new manufacturing processes, and the rise of the mechanized factory system.",
+    "latency_ms": 2772.79,
+    "tokens_generated": 49
+  },
+  {
+    "prompt_id": "sum_003",
+    "prompt_text": "Summarize in one sentence: TCP/IP (Transmission Control Protocol/Internet Protocol) is the basic communication language or protocol of the Internet. It can also be used as a communications protocol in a private network. When you are set up with direct access to the Internet, your computer is provided with a copy of the TCP/IP program just as every other computer that you may send messages to or get information from also has a copy of TCP/IP.",
+    "category": "summarization",
+    "config_name": "int4",
+    "output": "TCP/IP is the foundational communication protocol for the Internet, used both privately and publicly.",
+    "latency_ms": 1392.19,
+    "tokens_generated": 17
+  },
+  {
+    "prompt_id": "sum_004",
+    "prompt_text": "Summarize in one sentence: The Great Wall of China is a series of fortifications that were built across the historical northern borders of ancient Chinese states and Imperial China as protection against various nomadic groups from the Eurasian Steppe. Several walls were built from as early as the 7th century BC, with selective stretches later joined by Qin Shi Huang, the first emperor of China. Little of the Qin wall remains; the majority of the existing wall is from the Ming Dynasty.",
+    "category": "summarization",
+    "config_name": "int4",
+    "output": "The Great Wall of China is a series of fortifications built across northern borders of ancient China and later Ming Dynasty, serving as protection against nomadic groups from the Eurasian Steppe.",
+    "latency_ms": 2396.92,
+    "tokens_generated": 37
+  },
+  {
+    "prompt_id": "sum_005",
+    "prompt_text": "Summarize in one sentence: Machine learning is a method of data analysis that automates analytical model building. It is a branch of artificial intelligence based on the idea that systems can learn from data, identify patterns and make decisions with minimal human intervention. While many machine learning algorithms have been around for a long time, the ability to automatically apply complex mathematical calculations to big data is a recent development.",
+    "category": "summarization",
+    "config_name": "int4",
+    "output": "Machine learning is a subset of artificial intelligence that uses algorithms to analyze data and make decisions with minimal human intervention.",
+    "latency_ms": 1570.49,
+    "tokens_generated": 22
+  },
+  {
+    "prompt_id": "trans_001",
+    "prompt_text": "Translate to French: The weather is beautiful today.",
+    "category": "translation",
+    "config_name": "int4",
+    "output": "Le temps est magnifique aujourd'hui.",
+    "latency_ms": 546.3,
+    "tokens_generated": 8
+  },
+  {
+    "prompt_id": "trans_002",
+    "prompt_text": "Translate to Spanish: I would like a cup of coffee, please.",
+    "category": "translation",
+    "config_name": "int4",
+    "output": "Me gustaría un café, por favor.",
+    "latency_ms": 590.82,
+    "tokens_generated": 9
+  },
+  {
+    "prompt_id": "trans_003",
+    "prompt_text": "Translate to German: The book is on the table.",
+    "category": "translation",
+    "config_name": "int4",
+    "output": "Der Buch ist auf dem Tisch.",
+    "latency_ms": 551.51,
+    "tokens_generated": 8
+  },
+  {
+    "prompt_id": "trans_004",
+    "prompt_text": "Translate to Japanese: Good morning, how are you?",
+    "category": "translation",
+    "config_name": "int4",
+    "output": "こんにちは、元気ですか？",
+    "latency_ms": 429.99,
+    "tokens_generated": 6
+  },
+  {
+    "prompt_id": "trans_005",
+    "prompt_text": "Translate to Portuguese: Technology is changing the world rapidly.",
+    "category": "translation",
+    "config_name": "int4",
+    "output": "A tecnologia está mudando o mundo rapidamente.",
+    "latency_ms": 669.74,
+    "tokens_generated": 11
+  },
+  {
+    "prompt_id": "trans_006",
+    "prompt_text": "Translate to Italian: Where is the nearest train station?",
+    "category": "translation",
+    "config_name": "int4",
+    "output": "Dove è la stazione di treni più vicina?",
+    "latency_ms": 831.44,
+    "tokens_generated": 13
+  },
+  {
+    "prompt_id": "trans_007",
+    "prompt_text": "Translate to Korean: Machine learning is a subset of artificial intelligence.",
+    "category": "translation",
+    "config_name": "int4",
+    "output": "Machine learning is a subset of artificial intelligence. (Machine learning is a part of artificial intelligence.)",
+    "latency_ms": 1040.56,
+    "tokens_generated": 19
+  },
+  {
+    "prompt_id": "trans_008",
+    "prompt_text": "Translate to Chinese (Simplified): The conference will be held next Monday.",
+    "category": "translation",
+    "config_name": "int4",
+    "output": "会议将于下周一举行。",
+    "latency_ms": 450.54,
+    "tokens_generated": 6
+  },
+  {
+    "prompt_id": "trans_009",
+    "prompt_text": "Translate to Russian: Please send me the report by Friday.",
+    "category": "translation",
+    "config_name": "int4",
+    "output": "Пожалуйста, отправьте мне отчет до пятницы.",
+    "latency_ms": 814.49,
+    "tokens_generated": 15
+  },
+  {
+    "prompt_id": "trans_010",
+    "prompt_text": "Translate to Vietnamese: Data science requires strong mathematical foundations.",
+    "category": "translation",
+    "config_name": "int4",
+    "output": "Đầu tư dữ liệu yêu cầu nền tảng toán học mạnh mẽ.",
+    "latency_ms": 823.12,
+    "tokens_generated": 15
+  }
+]

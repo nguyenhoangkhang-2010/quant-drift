@@ -3,14 +3,14 @@
 import os
 import threading
 from contextlib import asynccontextmanager
-from pathlib import Path
 from dataclasses import asdict
+from pathlib import Path
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
-from .drift_detector import DriftDetector
 from .classifier import DriftType
+from .drift_detector import DriftDetector
 from .statistics import compute_task_stats, generate_recommendations, verdict
 from .verifiers.semantic_verifier import SemanticVerifier
 

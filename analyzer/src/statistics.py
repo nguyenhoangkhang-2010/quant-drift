@@ -1,10 +1,10 @@
 """Compute per-task drift statistics."""
 
-from dataclasses import dataclass
 from collections import defaultdict
+from dataclasses import dataclass
 
-from .drift_detector import DriftResult
 from .classifier import DriftType
+from .drift_detector import DriftResult
 
 
 @dataclass
@@ -101,7 +101,7 @@ def build_report(
     all_stats = []
     total_prompts = 0
 
-    for config_name, drifts in drifts_by_config.items():
+    for drifts in drifts_by_config.values():
         stats = compute_task_stats(drifts)
         all_stats.extend(stats)
         total_prompts = max(total_prompts, len(drifts))
