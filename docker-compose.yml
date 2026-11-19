@@ -14,7 +14,7 @@ services:
   dashboard:
     build: ./dashboard
     ports:
-      - "3000:3000"
+      - "${DASHBOARD_PORT:-3000}:3000"
     depends_on:
       analyzer:
         condition: service_healthy

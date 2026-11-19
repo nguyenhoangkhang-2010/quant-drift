@@ -22,16 +22,17 @@ jobs:
       - name: Lint
         run: |
           pip install ruff
-          ruff check runner/ analyzer/ scripts/
+          ruff check runner/ analyzer/ scripts/ tests/
 
       - name: Install analyzer dependencies
         run: |
           pip install torch --index-url https://download.pytorch.org/whl/cpu
           pip install -r analyzer/requirements.txt
 
-      - name: Analyzer smoke test
+      - name: Test
         run: |
-          python -c "from analyzer.src.api import app, RESULTS_DIR; assert (RESULTS_DIR / 'qwen2.5-1.5b' / 'fp16.json').exists(), 'committed benchmark results are missing'; print('OK')"
+          pip install pytest httpx
+          pytest
 
   dashboard:
     runs-on: ubuntu-latest
