@@ -4,12 +4,12 @@ import argparse
 import json
 import sys
 import time
+from dataclasses import asdict, dataclass
 from pathlib import Path
-from dataclasses import dataclass, asdict
 
 from tqdm import tqdm
 
-from .config import load_config, QuantConfig
+from .config import QuantConfig, load_config
 
 
 @dataclass
@@ -119,7 +119,7 @@ def run_benchmark(
                     tokens_generated=token_count,
                 )
                 results.append(asdict(result))
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 - one failing prompt must not abort the whole run
                 errors += 1
                 tqdm.write(f"  ERROR [{prompt['id']}]: {e}")
                 results.append(asdict(InferenceResult(

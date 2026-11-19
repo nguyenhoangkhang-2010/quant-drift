@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 jobs:
-  lint-and-test:
+  python:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -16,30 +16,22 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+          cache: pip
+          cache-dependency-path: analyzer/requirements.txt
 
-      - name: Install runner dependencies
+      - name: Lint
         run: |
-          cd runner
-          pip install -r requirements.txt
-          pip install ruff pytest
+          pip install ruff
+          ruff check runner/ analyzer/ scripts/
 
       - name: Install analyzer dependencies
         run: |
-          cd analyzer
-          pip install -r requirements.txt
-          pip install ruff pytest
+          pip install torch --index-url https://download.pytorch.org/whl/cpu
+          pip install -r analyzer/requirements.txt
 
-      - name: Lint runner
-        run: ruff check runner/
-
-      - name: Lint analyzer
-        run: ruff check analyzer/
-
-      - name: Generate sample results
-        run: python scripts/generate_sample_results.py
-
-      - name: Test analyzer imports
-        run: python -c "from analyzer.src.classifier import DriftClassifier; print('OK')"
+      - name: Analyzer smoke test
+        run: |
+          python -c "from analyzer.src.api import app, RESULTS_DIR; assert (RESULTS_DIR / 'qwen2.5-1.5b' / 'fp16.json').exists(), 'committed benchmark results are missing'; print('OK')"
 
   dashboard:
     runs-on: ubuntu-latest
@@ -50,18 +42,25 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "20"
+          cache: npm
+          cache-dependency-path: dashboard/package-lock.json
 
       - name: Install dependencies
-        run: |
-          cd dashboard
-          npm install
+        run: npm ci
+        working-directory: dashboard
 
       - name: Type check
-        run: |
-          cd dashboard
-          npx tsc --noEmit
+        run: npx tsc --noEmit
+        working-directory: dashboard
 
       - name: Build
-        run: |
-          cd dashboard
-          npm run build
+        run: npm run build
+        working-directory: dashboard
+
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build images
+        run: docker compose build

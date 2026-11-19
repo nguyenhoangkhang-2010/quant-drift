@@ -2,8 +2,8 @@
 
 import json
 import threading
-from pathlib import Path
 from dataclasses import dataclass
+from pathlib import Path
 
 from .classifier import DriftClassifier, DriftType
 

@@ -116,6 +116,7 @@ class CodeVerifier:
                 text=True,
                 encoding="utf-8",
                 timeout=self.TIMEOUT_SEC,
+                check=False,
             )
         except subprocess.TimeoutExpired:
             return nothing
