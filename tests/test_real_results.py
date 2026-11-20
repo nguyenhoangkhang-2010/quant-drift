@@ -47,5 +47,11 @@ def test_int4_math_gets_a_known_answer_wrong(detector):
     assert "408" in wrong["math_001"].explanation
 
 
+def test_matching_boxed_fractions_are_not_flagged(detector):
+    """math_010: both runs end with \\boxed{\\frac{3}{8}}; that is not a wrong answer."""
+    flagged = {d.prompt_id for d in dangerous(detector.detect("int4"), "math")}
+    assert "math_010" not in flagged
+
+
 def test_int4_code_changes_behavior(detector):
     assert dangerous(detector.detect("int4"), "code")
