@@ -1,9 +1,9 @@
-"""Classify drift as no-drift, benign, or dangerous."""
+"""Classify drift as no-drift, benign, or dangerous per task type."""
 
 from enum import Enum
 
-from .verifiers.math_verifier import MathVerifier
 from .verifiers.code_verifier import CodeVerifier
+from .verifiers.math_verifier import MathVerifier
 from .verifiers.semantic_verifier import SemanticVerifier
 
 
@@ -11,6 +11,15 @@ class DriftType(str, Enum):
     NO_DRIFT = "no_drift"
     BENIGN = "benign"
     DANGEROUS = "dangerous"
+
+
+TASK_CLASSIFIERS = {
+    "math": "_classify_math",
+    "code": "_classify_code",
+    "translation": "_classify_translation",
+    "summarization": "_classify_semantic",
+    "chat": "_classify_semantic",
+}
 
 
 class DriftClassifier:
@@ -33,12 +42,9 @@ class DriftClassifier:
         if baseline_output.strip() == quantized_output.strip():
             return DriftType.NO_DRIFT, 0.0, "Identical output"
 
-        if category == "math":
-            return self._classify_math(baseline_output, quantized_output, prompt_text)
-        elif category == "code":
-            return self._classify_code(baseline_output, quantized_output, prompt_text)
-        else:
-            return self._classify_semantic(baseline_output, quantized_output)
+        method_name = TASK_CLASSIFIERS.get(category, "_classify_semantic")
+        method = getattr(self, method_name)
+        return method(baseline_output, quantized_output, prompt_text)
 
     def _classify_math(
         self, baseline: str, quantized: str, prompt: str,
@@ -52,13 +58,18 @@ class DriftClassifier:
             return (
                 DriftType.DANGEROUS,
                 1.0,
-                f"Different answer: baseline={baseline_answer}, quantized={quantized_answer}",
+                f"Wrong answer: {baseline_answer} -> {quantized_answer}",
             )
+
+        expr_baseline = self.math_verifier.extract_expression(baseline)
+        expr_quantized = self.math_verifier.extract_expression(quantized)
+        if expr_baseline and expr_quantized and expr_baseline == expr_quantized:
+            return DriftType.BENIGN, 0.2, "Same expression, different explanation"
 
         similarity = self.semantic_verifier.similarity(baseline, quantized)
         if similarity > 0.95:
-            return DriftType.BENIGN, 0.1, f"High similarity ({similarity:.3f})"
-        return DriftType.DANGEROUS, 1.0 - similarity, f"Low similarity ({similarity:.3f})"
+            return DriftType.BENIGN, 0.1, f"High similarity ({similarity:.3f}), no numeric answer found"
+        return DriftType.DANGEROUS, 1.0 - similarity, f"Low similarity ({similarity:.3f}), no numeric answer found"
 
     def _classify_code(
         self, baseline: str, quantized: str, prompt: str,
@@ -68,6 +79,11 @@ class DriftClassifier:
 
         if baseline_correct and not quantized_correct:
             return DriftType.DANGEROUS, 1.0, "Quantized output has syntax errors"
+
+        if not baseline_correct and not quantized_correct:
+            similarity = self.semantic_verifier.similarity(baseline, quantized)
+            return DriftType.BENIGN if similarity > 0.85 else DriftType.DANGEROUS, \
+                1.0 - similarity, f"Both have syntax errors ({similarity:.3f})"
 
         if baseline_correct and quantized_correct:
             functionally_equal = self.code_verifier.compare_outputs(baseline, quantized)
@@ -80,8 +96,18 @@ class DriftClassifier:
             return DriftType.BENIGN, 0.2, f"Similar code ({similarity:.3f})"
         return DriftType.DANGEROUS, 1.0 - similarity, f"Different code ({similarity:.3f})"
 
+    def _classify_translation(
+        self, baseline: str, quantized: str, prompt: str,
+    ) -> tuple[DriftType, float, str]:
+        similarity = self.semantic_verifier.similarity(baseline, quantized)
+        if similarity > 0.95:
+            return DriftType.NO_DRIFT, 0.0, f"Near-identical translation ({similarity:.3f})"
+        if similarity > 0.80:
+            return DriftType.BENIGN, 1.0 - similarity, f"Alternate translation ({similarity:.3f})"
+        return DriftType.DANGEROUS, 1.0 - similarity, f"Meaning changed ({similarity:.3f})"
+
     def _classify_semantic(
-        self, baseline: str, quantized: str,
+        self, baseline: str, quantized: str, prompt: str,
     ) -> tuple[DriftType, float, str]:
         similarity = self.semantic_verifier.similarity(baseline, quantized)
         if similarity > 0.95:

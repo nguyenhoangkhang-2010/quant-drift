@@ -17,7 +17,9 @@ models/
 *.gguf
 *.bin
 
-results/
+# Benchmark output is ignored except the committed real run that the demo ships with.
+results/*
+!results/qwen2.5-1.5b/
 
 .idea/
 .vscode/

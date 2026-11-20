@@ -4,17 +4,17 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - ./results:/app/results
-      - ./prompts:/app/prompts
-    environment:
-      - RESULTS_DIR=/app/results
-      - PROMPTS_DIR=/app/prompts
+      - ./results:/app/results:ro
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/models')"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
 
   dashboard:
     build: ./dashboard
     ports:
-      - "3000:3000"
+      - "${DASHBOARD_PORT:-3000}:3000"
     depends_on:
-      - analyzer
-    environment:
-      - VITE_API_URL=http://localhost:8000
+      analyzer:
+        condition: service_healthy
